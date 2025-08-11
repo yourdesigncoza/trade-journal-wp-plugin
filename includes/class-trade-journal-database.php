@@ -63,10 +63,10 @@ class Trade_Journal_Database {
 
         // Default configuration - can be overridden via WordPress admin
         $this->config = array(
-            'host'     => 'sql57.jnb1.host-h.net',
-            'username' => 'demockdugf_2',
-            'password' => 'TFP3vaHfSKXfgSKbGHs8',
-            'database' => 'demockdugf_db2',
+            'host'     => '',
+            'username' => '',
+            'password' => '',
+            'database' => '',
             'port'     => 3306,
         );
     }

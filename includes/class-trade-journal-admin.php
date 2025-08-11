@@ -182,7 +182,7 @@ class Trade_Journal_Admin {
      */
     public function db_host_field_callback() {
         $config = get_option( 'trade_journal_wp_db_config', array() );
-        $host = isset( $config['host'] ) ? $config['host'] : 'sql57.jnb1.host-h.net';
+        $host = isset( $config['host'] ) ? $config['host'] : '';
         
         echo '<input type="text" name="trade_journal_wp_db_config[host]" value="' . esc_attr( $host ) . '" class="regular-text" />';
         echo '<p class="description">' . esc_html__( 'MySQL database host address', 'trade-journal-wp' ) . '</p>';
@@ -193,7 +193,7 @@ class Trade_Journal_Admin {
      */
     public function db_username_field_callback() {
         $config = get_option( 'trade_journal_wp_db_config', array() );
-        $username = isset( $config['username'] ) ? $config['username'] : 'demockdugf_2';
+        $username = isset( $config['username'] ) ? $config['username'] : '';
         
         echo '<input type="text" name="trade_journal_wp_db_config[username]" value="' . esc_attr( $username ) . '" class="regular-text" />';
         echo '<p class="description">' . esc_html__( 'MySQL database username', 'trade-journal-wp' ) . '</p>';
@@ -215,7 +215,7 @@ class Trade_Journal_Admin {
      */
     public function db_name_field_callback() {
         $config = get_option( 'trade_journal_wp_db_config', array() );
-        $database = isset( $config['database'] ) ? $config['database'] : 'demockdugf_db2';
+        $database = isset( $config['database'] ) ? $config['database'] : '';
         
         echo '<input type="text" name="trade_journal_wp_db_config[database]" value="' . esc_attr( $database ) . '" class="regular-text" />';
         echo '<p class="description">' . esc_html__( 'MySQL database name', 'trade-journal-wp' ) . '</p>';
