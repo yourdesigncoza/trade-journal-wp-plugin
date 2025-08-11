@@ -26,7 +26,7 @@ class Trade_Journal_Admin {
      */
     public function init_settings() {
         // Register settings
-        register_setting( 'trade_journal_wp_settings_group', 'trade_journal_wp_settings' );
+        register_setting( 'trade_journal_wp_settings_group', 'trade_journal_wp_settings', array( $this, 'sanitize_settings' ) );
         register_setting( 'trade_journal_wp_settings_group', 'trade_journal_wp_db_config' );
 
         // Add settings sections
@@ -149,6 +149,16 @@ class Trade_Journal_Admin {
         $settings = get_option( 'trade_journal_wp_settings', array() );
         $markets = isset( $settings['markets'] ) ? $settings['markets'] : array( 'XAUUSD', 'EU', 'GU', 'UJ', 'US30', 'NAS100' );
         
+        // Handle case where markets might be saved as string instead of array
+        if ( is_string( $markets ) ) {
+            $markets = explode( "\n", trim( $markets ) );
+        }
+        
+        // Ensure we have an array
+        if ( ! is_array( $markets ) ) {
+            $markets = array( 'XAUUSD', 'EU', 'GU', 'UJ', 'US30', 'NAS100' );
+        }
+        
         echo '<textarea name="trade_journal_wp_settings[markets]" rows="3" cols="50" class="regular-text">';
         echo esc_textarea( implode( "\n", $markets ) );
         echo '</textarea>';
@@ -162,6 +172,16 @@ class Trade_Journal_Admin {
         $settings = get_option( 'trade_journal_wp_settings', array() );
         $sessions = isset( $settings['sessions'] ) ? $settings['sessions'] : array( 'LO', 'NY', 'AS' );
         
+        // Handle case where sessions might be saved as string instead of array
+        if ( is_string( $sessions ) ) {
+            $sessions = array_map( 'trim', explode( ',', $sessions ) );
+        }
+        
+        // Ensure we have an array
+        if ( ! is_array( $sessions ) ) {
+            $sessions = array( 'LO', 'NY', 'AS' );
+        }
+        
         echo '<input type="text" name="trade_journal_wp_settings[sessions]" value="' . esc_attr( implode( ', ', $sessions ) ) . '" class="regular-text" />';
         echo '<p class="description">' . esc_html__( 'Enter sessions separated by commas (e.g., LO, NY, AS)', 'trade-journal-wp' ) . '</p>';
     }
@@ -172,6 +192,16 @@ class Trade_Journal_Admin {
     public function timeframes_field_callback() {
         $settings = get_option( 'trade_journal_wp_settings', array() );
         $timeframes = isset( $settings['timeframes'] ) ? $settings['timeframes'] : array( '5m', '15m', '30m', '1H', '4H', '1D' );
+        
+        // Handle case where timeframes might be saved as string instead of array
+        if ( is_string( $timeframes ) ) {
+            $timeframes = array_map( 'trim', explode( ',', $timeframes ) );
+        }
+        
+        // Ensure we have an array
+        if ( ! is_array( $timeframes ) ) {
+            $timeframes = array( '5m', '15m', '30m', '1H', '4H', '1D' );
+        }
         
         echo '<input type="text" name="trade_journal_wp_settings[timeframes]" value="' . esc_attr( implode( ', ', $timeframes ) ) . '" class="regular-text" />';
         echo '<p class="description">' . esc_html__( 'Enter timeframes separated by commas (e.g., 5m, 15m, 30m, 1H, 4H, 1D)', 'trade-journal-wp' ) . '</p>';

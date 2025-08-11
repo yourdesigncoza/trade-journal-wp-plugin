@@ -123,3 +123,4 @@ To test functionality:
 - All shortcodes support `class` attribute for custom styling
 - Views are in `views/frontend/` directory
 - CSS customizations go in `assets/css/frontend.css`
+- I will always ask to GIT

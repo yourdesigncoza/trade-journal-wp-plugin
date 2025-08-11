@@ -193,6 +193,16 @@ class Trade_Journal_Shortcodes {
         $settings = get_option( 'trade_journal_wp_settings', array() );
         $markets = isset( $settings['markets'] ) ? $settings['markets'] : array( 'XAUUSD', 'EU', 'GU', 'UJ', 'US30', 'NAS100' );
         
+        // Handle case where markets might be saved as string instead of array
+        if ( is_string( $markets ) ) {
+            $markets = array_filter( array_map( 'trim', explode( "\n", $markets ) ) );
+        }
+        
+        // Ensure we have an array
+        if ( ! is_array( $markets ) || empty( $markets ) ) {
+            $markets = array( 'XAUUSD', 'EU', 'GU', 'UJ', 'US30', 'NAS100' );
+        }
+        
         $options = array();
         foreach ( $markets as $market ) {
             $label = self::get_market_label( $market );
@@ -241,6 +251,16 @@ class Trade_Journal_Shortcodes {
     public static function get_timeframe_options() {
         $settings = get_option( 'trade_journal_wp_settings', array() );
         $timeframes = isset( $settings['timeframes'] ) ? $settings['timeframes'] : array( '5m', '15m', '30m', '1H', '4H', '1D' );
+        
+        // Handle case where timeframes might be saved as string instead of array
+        if ( is_string( $timeframes ) ) {
+            $timeframes = array_filter( array_map( 'trim', explode( ',', $timeframes ) ) );
+        }
+        
+        // Ensure we have an array
+        if ( ! is_array( $timeframes ) || empty( $timeframes ) ) {
+            $timeframes = array( '5m', '15m', '30m', '1H', '4H', '1D' );
+        }
         
         $options = array();
         foreach ( $timeframes as $tf ) {

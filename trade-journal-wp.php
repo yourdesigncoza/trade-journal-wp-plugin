@@ -76,12 +76,18 @@ class Trade_Journal_WP {
         // Admin menu
         add_action( 'admin_menu', array( $this, 'add_admin_menu' ) );
         
-        // AJAX handlers
+        // AJAX handlers for logged-in users
         add_action( 'wp_ajax_trade_journal_get_trades', array( $this, 'ajax_get_trades' ) );
         add_action( 'wp_ajax_trade_journal_save_trade', array( $this, 'ajax_save_trade' ) );
         add_action( 'wp_ajax_trade_journal_update_trade', array( $this, 'ajax_update_trade' ) );
         add_action( 'wp_ajax_trade_journal_delete_trade', array( $this, 'ajax_delete_trade' ) );
         add_action( 'wp_ajax_trade_journal_test_db_connection', array( $this, 'ajax_test_db_connection' ) );
+        
+        // AJAX handlers for non-logged-in users (frontend)
+        add_action( 'wp_ajax_nopriv_trade_journal_get_trades', array( $this, 'ajax_get_trades' ) );
+        add_action( 'wp_ajax_nopriv_trade_journal_save_trade', array( $this, 'ajax_save_trade' ) );
+        add_action( 'wp_ajax_nopriv_trade_journal_update_trade', array( $this, 'ajax_update_trade' ) );
+        add_action( 'wp_ajax_nopriv_trade_journal_delete_trade', array( $this, 'ajax_delete_trade' ) );
         
         // Load required files
         $this->load_includes();
@@ -380,30 +386,61 @@ class Trade_Journal_WP {
 
     // AJAX methods
     public function ajax_get_trades() {
-        check_ajax_referer( 'trade_journal_wp_nonce', 'nonce' );
+        // Verify nonce
+        if ( ! wp_verify_nonce( $_POST['nonce'] ?? '', 'trade_journal_wp_nonce' ) ) {
+            wp_send_json_error( 'Security check failed' );
+        }
         
-        $database = new Trade_Journal_Database();
-        $trades = $database->get_all_trades();
-        
-        wp_send_json_success( $trades );
+        try {
+            $database = Trade_Journal_Database::get_instance();
+            
+            // Check if database connection is available
+            if ( ! $database->test_connection() ) {
+                wp_send_json_error( 'Database connection failed. Please check your database settings.' );
+            }
+            
+            $trades = $database->get_all_trades();
+            wp_send_json_success( $trades );
+            
+        } catch ( Exception $e ) {
+            error_log( 'Trade Journal WP AJAX Error: ' . $e->getMessage() );
+            wp_send_json_error( 'Database connection error. Please check your settings.' );
+        }
     }
 
     public function ajax_save_trade() {
         check_ajax_referer( 'trade_journal_wp_nonce', 'nonce' );
         
-        if ( ! current_user_can( 'edit_posts' ) ) {
+        // Allow frontend users to save trades, but require login or specific capability
+        if ( ! is_user_logged_in() ) {
+            wp_send_json_error( 'Please log in to save trades' );
+        }
+        
+        if ( ! current_user_can( 'edit_posts' ) && ! current_user_can( 'read' ) ) {
             wp_send_json_error( 'Insufficient permissions' );
         }
         
-        $data = $this->sanitize_trade_data( $_POST );
-        
-        $database = new Trade_Journal_Database();
-        $result = $database->save_trade( $data );
-        
-        if ( $result ) {
-            wp_send_json_success( $result );
-        } else {
-            wp_send_json_error( 'Failed to save trade' );
+        try {
+            $data = $this->sanitize_trade_data( $_POST );
+            
+            $database = Trade_Journal_Database::get_instance();
+            
+            // Check if database connection is available
+            if ( ! $database->test_connection() ) {
+                wp_send_json_error( 'Database connection failed. Please check your database settings.' );
+            }
+            
+            $result = $database->save_trade( $data );
+            
+            if ( $result ) {
+                wp_send_json_success( $result );
+            } else {
+                wp_send_json_error( 'Failed to save trade' );
+            }
+            
+        } catch ( Exception $e ) {
+            error_log( 'Trade Journal WP Save Trade Error: ' . $e->getMessage() );
+            wp_send_json_error( 'Database error occurred while saving trade.' );
         }
     }
 
@@ -414,16 +451,28 @@ class Trade_Journal_WP {
             wp_send_json_error( 'Insufficient permissions' );
         }
         
-        $id = sanitize_text_field( $_POST['id'] );
-        $data = $this->sanitize_trade_data( $_POST );
-        
-        $database = new Trade_Journal_Database();
-        $result = $database->update_trade( $id, $data );
-        
-        if ( $result ) {
-            wp_send_json_success( $result );
-        } else {
-            wp_send_json_error( 'Failed to update trade' );
+        try {
+            $id = sanitize_text_field( $_POST['id'] );
+            $data = $this->sanitize_trade_data( $_POST );
+            
+            $database = Trade_Journal_Database::get_instance();
+            
+            // Check if database connection is available
+            if ( ! $database->test_connection() ) {
+                wp_send_json_error( 'Database connection failed. Please check your database settings.' );
+            }
+            
+            $result = $database->update_trade( $id, $data );
+            
+            if ( $result ) {
+                wp_send_json_success( $result );
+            } else {
+                wp_send_json_error( 'Failed to update trade' );
+            }
+            
+        } catch ( Exception $e ) {
+            error_log( 'Trade Journal WP Update Trade Error: ' . $e->getMessage() );
+            wp_send_json_error( 'Database error occurred while updating trade.' );
         }
     }
 
@@ -434,15 +483,27 @@ class Trade_Journal_WP {
             wp_send_json_error( 'Insufficient permissions' );
         }
         
-        $id = sanitize_text_field( $_POST['id'] );
-        
-        $database = new Trade_Journal_Database();
-        $result = $database->delete_trade( $id );
-        
-        if ( $result ) {
-            wp_send_json_success();
-        } else {
-            wp_send_json_error( 'Failed to delete trade' );
+        try {
+            $id = sanitize_text_field( $_POST['id'] );
+            
+            $database = Trade_Journal_Database::get_instance();
+            
+            // Check if database connection is available
+            if ( ! $database->test_connection() ) {
+                wp_send_json_error( 'Database connection failed. Please check your database settings.' );
+            }
+            
+            $result = $database->delete_trade( $id );
+            
+            if ( $result ) {
+                wp_send_json_success();
+            } else {
+                wp_send_json_error( 'Failed to delete trade' );
+            }
+            
+        } catch ( Exception $e ) {
+            error_log( 'Trade Journal WP Delete Trade Error: ' . $e->getMessage() );
+            wp_send_json_error( 'Database error occurred while deleting trade.' );
         }
     }
 
