@@ -2,6 +2,7 @@
 description: "Commit all changes and push to GitHub"
 argument-hint: "<commit message>"
 allowed-tools: ["Bash"]
+auto-approve: true
 ---
 
 I'll commit all your changes and push them to GitHub with the message: "$ARGUMENTS"
