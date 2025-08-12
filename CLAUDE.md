@@ -20,17 +20,30 @@ This is a WordPress plugin called "Trade Journal WP" that provides comprehensive
 **CRITICAL**: This plugin uses an **external MySQL database**, NOT the WordPress database. The database configuration is stored in WordPress options but connections are made to a separate MySQL server. The table structure is:
 
 ```sql
-trading_journal_entries (
-  id varchar(255) PRIMARY KEY,
-  market enum('XAUUSD','EU','GU','UJ','US30','NAS100'),
-  session enum('LO','NY','AS'),
-  date, time, direction enum('LONG','SHORT'),
-  entry_price, exit_price decimal(10,5),
-  outcome enum('W','L','BE','C'),
-  pl_percent, rr decimal(10,2),
-  tf json, chart_htf text, chart_ltf text,
-  comments text, created_at, updated_at timestamps
-)
+CREATE TABLE trading_journal_entries (
+    id varchar(255) NOT NULL,
+    market enum('XAUUSD','EU','GU','UJ','US30','NAS100') NOT NULL,
+    session enum('LO','NY','AS') NOT NULL,
+    date date NOT NULL,
+    time time DEFAULT NULL,
+    direction enum('LONG','SHORT') NOT NULL,
+    entry_price decimal(10,5) DEFAULT NULL,
+    exit_price decimal(10,5) DEFAULT NULL,
+    outcome enum('W','L','BE','C') DEFAULT NULL,
+    pl_percent decimal(10,2) DEFAULT NULL,
+    rr decimal(10,2) DEFAULT NULL,
+    tf json DEFAULT NULL,
+    chart_htf text DEFAULT NULL,
+    chart_ltf text DEFAULT NULL,
+    comments text DEFAULT NULL,
+    created_at timestamp DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    KEY idx_date (date),
+    KEY idx_market (market),
+    KEY idx_outcome (outcome),
+    KEY idx_created_at (created_at)
+);
 ```
 
 ### Frontend Architecture
@@ -38,13 +51,42 @@ trading_journal_entries (
 - **Shortcodes**: 5 main shortcodes for different display modes
   - `[trade_journal_dashboard]` - Complete interface
   - `[trade_journal_add]` - Add trade form only
-  - `[trade_journal_list]` - Trade history table
+  - `[trade_journal_list]` - Trade history table with Phoenix styling
   - `[trade_journal_stats]` - Performance analytics
   - `[trade_journal_checklist]` - Pre-trade checklist
 
 - **AJAX Operations**: All database operations use WordPress AJAX with nonce verification
-- **JavaScript**: jQuery-based frontend with auto-save, real-time updates, and data validation
-- **Styling**: Bootstrap 5 + custom CSS with dark mode support
+- **JavaScript**: jQuery-based frontend with Bootstrap tooltip initialization, auto-save, real-time updates, and data validation
+- **Styling**: Phoenix framework classes with Bootstrap 5 + FontAwesome icons
+
+## Phoenix Framework Styling System
+
+The frontend uses Phoenix framework CSS classes for professional appearance:
+
+### Table Styling
+- **Base Classes**: `table table-sm fs-9 mb-0 overflow-hidden`
+- **Header Classes**: `sort ps-3 pe-1 align-middle white-space-nowrap`
+- **Row Classes**: `py-2 align-middle` with alternating `bg-light` for zebra striping
+- **Badge Classes**: `badge-phoenix badge-phoenix-primary/success/danger/warning/info`
+
+### Button Styling
+- **Action Buttons**: `btn btn-subtle-primary/danger/info` for compact appearance
+- **Button Groups**: `btn-group btn-group-sm` with custom `ydcoza-btn-group-tiny` class
+- **Icon Integration**: FontAwesome icons with consistent sizing and colors
+
+### Column Icons
+Each table column header includes a FontAwesome icon:
+- Date: `fas fa-calendar-alt text-primary`
+- Time: `fas fa-clock text-info`
+- Market: `fas fa-coins text-primary`
+- Session: `fas fa-globe text-info`
+- Direction: `fas fa-arrows-alt-v text-warning`
+- Entry/Exit Price: `fas fa-sign-in-alt/sign-out-alt text-success/danger`
+- Outcome: `fas fa-trophy text-warning`
+- P/L %: `fas fa-percentage text-purple`
+- RR: `fas fa-balance-scale text-purple`
+- TF: `fas fa-chart-line text-info`
+- Chart Links: `fas fa-chart-bar/chart-area text-warning`
 
 ## Configuration & Settings
 
@@ -73,12 +115,22 @@ Settings stored in `trade_journal_wp_settings` WordPress option:
 - CSS/JS only loaded on pages with shortcodes (conditional loading)
 - External CDN dependencies: Bootstrap 5, Font Awesome
 - Localized JavaScript for AJAX endpoints and translations
+- Bootstrap tooltips initialized for comments display
 
 ### Data Flow
 1. Frontend forms → AJAX → WordPress handlers
 2. WordPress handlers → Database class → External MySQL
 3. Statistics calculated on database level
 4. Real-time updates via jQuery events
+5. Tooltip initialization for interactive elements
+
+### Price Formatting
+The `format_price()` method truncates prices to 3 decimal places without rounding:
+```php
+// Truncate to specified decimals without rounding
+$multiplier = pow( 10, $decimals );
+$truncated = floor( (float) $value * $multiplier ) / $multiplier;
+```
 
 ## Development Commands
 
@@ -97,14 +149,18 @@ To test functionality:
 4. Create pages with shortcodes to test frontend
 5. Verify AJAX operations work correctly
 6. Check admin interface for trade management
+7. Test Bootstrap tooltips on comments column
+8. Verify Phoenix styling renders correctly
 
 ## Important Notes
 
 - **External Database**: Always remember this uses external MySQL, not WordPress DB
 - **Compatibility**: Designed to work alongside existing PHP trade journal application
+- **Phoenix Framework**: Frontend uses Phoenix theme classes - leverage existing CSS before adding custom styles
+- **Theme CSS Location**: Additional custom styles go in `/opt/lampp/htdocs/wecoza/wp-content/themes/wecoza_3_child_theme/includes/css/ydcoza-theme.css`
 - **Bootstrap Dependency**: Frontend assumes Bootstrap 5 is available
 - **PHP Requirements**: Requires PHP 7.4+, WordPress 5.0+
-- **Database Password**: Hard-coded default credentials in database class (should be configured via admin)
+- **No Rounding**: Price formatting truncates values without rounding up
 
 ## Common Operations
 
@@ -122,5 +178,14 @@ To test functionality:
 ### Customizing Display
 - All shortcodes support `class` attribute for custom styling
 - Views are in `views/frontend/` directory
-- CSS customizations go in `assets/css/frontend.css`
-- I will always ask to GIT
+- Check existing Phoenix theme classes before adding custom CSS
+- Bootstrap tooltips require JavaScript initialization in `assets/js/frontend.js`
+- Table columns use consistent Phoenix styling patterns
+
+### UI Styling Guidelines
+- Use `badge-phoenix` variants for status indicators
+- Apply `btn-subtle-*` classes for action buttons
+- Maintain `fs-9` and `py-2` classes for compact table rows
+- Include FontAwesome icons in column headers for visual consistency
+- Group related actions using `btn-group btn-group-sm`
+- Comments display as tooltip-enabled buttons to save space
