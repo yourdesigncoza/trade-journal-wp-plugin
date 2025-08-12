@@ -58,11 +58,11 @@ if ( ! defined( 'ABSPATH' ) ) {
             </div>
             <div class="col-md-2">
                 <input type="date" class="form-control form-control-sm" id="dateFromFilter" 
-                       placeholder="<?php esc_attr_e( 'From Date', 'trade-journal-wp' ); ?>">
+                       placeholder="<?php esc_attr_e( 'dd/mm/yyyy', 'trade-journal-wp' ); ?>">
             </div>
             <div class="col-md-2">
                 <input type="date" class="form-control form-control-sm" id="dateToFilter" 
-                       placeholder="<?php esc_attr_e( 'To Date', 'trade-journal-wp' ); ?>">
+                       placeholder="<?php esc_attr_e( 'dd/mm/yyyy', 'trade-journal-wp' ); ?>">
             </div>
             <div class="col-md-2">
                 <button type="button" class="btn btn-sm btn-outline-secondary w-100" id="clearFilters">
@@ -73,93 +73,178 @@ if ( ! defined( 'ABSPATH' ) ) {
         <?php endif; ?>
 
         <div class="table-responsive">
-            <table class="table table-hover" id="tradesTable">
-                <thead class="table-light">
+            <table class="table table-sm fs-9 mb-0 overflow-hidden" id="tradesTable">
+                <thead class="text-body">
                     <tr>
-                        <th class="sortable" data-sort="date">
+                        <th class="sort ps-3 pe-1 align-middle white-space-nowrap" data-sort="date">
+                            <i class="fas fa-calendar-alt text-primary me-1"></i>
                             <?php esc_html_e( 'Date', 'trade-journal-wp' ); ?>
-                            <i class="fas fa-sort ms-1"></i>
                         </th>
-                        <th class="sortable" data-sort="market">
+                        <th class="sort pe-1 align-middle white-space-nowrap" data-sort="time">
+                            <i class="fas fa-clock text-info me-1"></i>
+                            <?php esc_html_e( 'Time', 'trade-journal-wp' ); ?>
+                        </th>
+                        <th class="sort pe-1 align-middle white-space-nowrap text-center" data-sort="market" style="min-width: 90px;">
+                            <i class="fas fa-coins text-primary me-1"></i>
                             <?php esc_html_e( 'Market', 'trade-journal-wp' ); ?>
-                            <i class="fas fa-sort ms-1"></i>
                         </th>
-                        <th class="sortable" data-sort="session">
+                        <th class="sort pe-1 align-middle white-space-nowrap text-center" data-sort="session" style="min-width: 90px;">
+                            <i class="fas fa-globe text-info me-1"></i>
                             <?php esc_html_e( 'Session', 'trade-journal-wp' ); ?>
-                            <i class="fas fa-sort ms-1"></i>
                         </th>
-                        <th class="sortable" data-sort="direction">
+                        <th class="sort pe-1 align-middle white-space-nowrap" data-sort="direction" style="min-width: 90px;">
+                            <i class="fas fa-arrows-alt-v text-warning me-1"></i>
                             <?php esc_html_e( 'Direction', 'trade-journal-wp' ); ?>
-                            <i class="fas fa-sort ms-1"></i>
                         </th>
-                        <th class="sortable" data-sort="entry_price">
-                            <?php esc_html_e( 'Entry', 'trade-journal-wp' ); ?>
-                            <i class="fas fa-sort ms-1"></i>
+                        <th class="sort pe-1 align-middle white-space-nowrap text-end" data-sort="entry_price" style="min-width: 110px;">
+                            <i class="fas fa-sign-in-alt text-success me-1"></i>
+                            <?php esc_html_e( 'Entry Price', 'trade-journal-wp' ); ?>
                         </th>
-                        <th class="sortable" data-sort="exit_price">
-                            <?php esc_html_e( 'Exit', 'trade-journal-wp' ); ?>
-                            <i class="fas fa-sort ms-1"></i>
+                        <th class="sort pe-1 align-middle white-space-nowrap text-end" data-sort="exit_price" style="min-width: 110px;">
+                            <i class="fas fa-sign-out-alt text-danger me-1"></i>
+                            <?php esc_html_e( 'Exit Price', 'trade-journal-wp' ); ?>
                         </th>
-                        <th class="sortable" data-sort="outcome">
+                        <th class="sort pe-1 align-middle white-space-nowrap text-center" data-sort="outcome" style="min-width: 100px;">
+                            <i class="fas fa-trophy text-warning me-1"></i>
                             <?php esc_html_e( 'Outcome', 'trade-journal-wp' ); ?>
-                            <i class="fas fa-sort ms-1"></i>
                         </th>
-                        <th class="sortable" data-sort="pl_percent">
+                        <th class="sort pe-1 align-middle white-space-nowrap text-center" data-sort="pl_percent" style="min-width: 90px;">
+                            <i class="fas fa-percentage text-purple me-1"></i>
                             <?php esc_html_e( 'P/L %', 'trade-journal-wp' ); ?>
-                            <i class="fas fa-sort ms-1"></i>
                         </th>
-                        <th class="sortable" data-sort="rr">
+                        <th class="sort pe-1 align-middle white-space-nowrap text-center" data-sort="rr" style="min-width: 90px;">
+                            <i class="fas fa-balance-scale text-purple me-1"></i>
                             <?php esc_html_e( 'RR', 'trade-journal-wp' ); ?>
-                            <i class="fas fa-sort ms-1"></i>
                         </th>
-                        <th><?php esc_html_e( 'Actions', 'trade-journal-wp' ); ?></th>
+                        <th class="pe-1 align-middle white-space-nowrap text-center" style="min-width: 100px;">
+                            <i class="fas fa-chart-line text-info me-1"></i>
+                            <?php esc_html_e( 'TF', 'trade-journal-wp' ); ?>
+                        </th>
+                        <th class="pe-1 align-middle white-space-nowrap text-center" style="min-width: 100px;">
+                            <i class="fas fa-chart-bar text-warning me-1"></i>
+                            <?php esc_html_e( 'Chart HTF', 'trade-journal-wp' ); ?>
+                        </th>
+                        <th class="pe-1 align-middle white-space-nowrap text-center" style="min-width: 100px;">
+                            <i class="fas fa-chart-area text-warning me-1"></i>
+                            <?php esc_html_e( 'Chart LTF', 'trade-journal-wp' ); ?>
+                        </th>
+                        <th class="no-sort text-center" style="min-width: 150px;"><?php // esc_html_e( 'Actions', 'trade-journal-wp' ); ?></th>
                     </tr>
                 </thead>
-                <tbody id="tradesTableBody">
+                <tbody class="list">
                     <?php if ( ! empty( $trades ) ) : ?>
-                        <?php foreach ( $trades as $trade ) : ?>
-                            <tr data-trade-id="<?php echo esc_attr( $trade['id'] ); ?>">
-                                <td><?php echo esc_html( date( 'M j, Y', strtotime( $trade['date'] ) ) ); ?></td>
-                                <td>
-                                    <span class="badge bg-primary"><?php echo esc_html( $trade['market'] ); ?></span>
+                        <?php 
+                        $row_count = 0;
+                        foreach ( $trades as $trade ) : 
+                            $row_count++;
+                            $row_class = $row_count % 2 === 0 ? 'bg-light' : '';
+                        ?>
+                            <tr class="btn-reveal-trigger" data-trade-id="<?php echo esc_attr( $trade['id'] ); ?>">
+                                <td class="py-2 ps-3 align-middle white-space-nowrap fs-9">
+                                    <?php echo esc_html( date( 'd/m/Y', strtotime( $trade['date'] ) ) ); ?>
                                 </td>
-                                <td><?php echo esc_html( Trade_Journal_Shortcodes::get_session_options()[ $trade['session'] ] ?? $trade['session'] ); ?></td>
-                                <td>
-                                    <span class="badge <?php echo 'LONG' === $trade['direction'] ? 'bg-success' : 'bg-danger'; ?>">
+                                <td class="py-2 align-middle fs-9">
+                                    <?php echo esc_html( isset( $trade['time'] ) ? $trade['time'] : '-' ); ?>
+                                </td>
+                                <td class="py-2 align-middle text-center">
+                                    <span class="badge badge-sm rounded-pill badge-phoenix badge-phoenix-primary text-center"><?php echo esc_html( $trade['market'] ); ?></span>
+                                </td>
+                                <td class="py-2 align-middle fs-9 text-center">
+                                    <?php echo esc_html( Trade_Journal_Shortcodes::get_session_options()[ $trade['session'] ] ?? $trade['session'] ); ?>
+                                </td>
+                                <td class="py-2 align-middle text-center">
+                                    <span class="badge badge-sm rounded-pill badge-phoenix <?php echo 'LONG' === $trade['direction'] ? 'badge-phoenix-success' : 'badge-phoenix-danger'; ?>">
                                         <?php echo esc_html( $trade['direction'] ); ?>
                                     </span>
                                 </td>
-                                <td><?php echo esc_html( Trade_Journal_Shortcodes::format_price( $trade['entry_price'] ) ); ?></td>
-                                <td><?php echo esc_html( Trade_Journal_Shortcodes::format_price( $trade['exit_price'] ) ); ?></td>
-                                <td>
+                                <td class="py-2 align-middle fs-9 text-end"><?php echo esc_html( Trade_Journal_Shortcodes::format_price( $trade['entry_price'] ) ); ?></td>
+                                <td class="py-2 align-middle fs-9 text-end"><?php echo esc_html( Trade_Journal_Shortcodes::format_price( $trade['exit_price'] ) ); ?></td>
+                                <td class="py-2 align-middle text-center white-space-nowrap">
                                     <?php if ( $trade['outcome'] ) : ?>
-                                        <span class="badge <?php echo esc_attr( Trade_Journal_Shortcodes::get_outcome_badge_class( $trade['outcome'] ) ); ?>">
+                                        <?php
+                                        $outcome_class = '';
+                                        switch ( $trade['outcome'] ) {
+                                            case 'W': $outcome_class = 'badge-phoenix-success'; break;
+                                            case 'L': $outcome_class = 'badge-phoenix-danger'; break;
+                                            case 'BE': $outcome_class = 'badge-phoenix-secondary'; break;
+                                            case 'C': $outcome_class = 'badge-phoenix-warning'; break;
+                                            default: $outcome_class = 'badge-phoenix-secondary';
+                                        }
+                                        ?>
+                                        <span class="badge badge-sm rounded-pill badge-phoenix text-center <?php echo esc_attr( $outcome_class ); ?>">
                                             <?php echo esc_html( Trade_Journal_Shortcodes::get_outcome_options()[ $trade['outcome'] ] ?? $trade['outcome'] ); ?>
                                         </span>
                                     <?php else : ?>
                                         <span class="text-muted">-</span>
                                     <?php endif; ?>
                                 </td>
-                                <td>
-                                    <?php if ( $trade['pl_percent'] ) : ?>
+                                <td class="py-2 align-middle text-end fs-9 fw-medium text-center">
+                                    <?php if ( isset( $trade['pl_percent'] ) && $trade['pl_percent'] !== null ) : ?>
                                         <span class="<?php echo $trade['pl_percent'] >= 0 ? 'text-success' : 'text-danger'; ?>">
-                                            <?php echo esc_html( Trade_Journal_Shortcodes::format_percentage( $trade['pl_percent'] ) ); ?>
+                                            <?php 
+                                            $prefix = $trade['pl_percent'] >= 0 ? '+' : '';
+                                            echo esc_html( $prefix . number_format( (float) $trade['pl_percent'], 2 ) . '%' ); 
+                                            ?>
                                         </span>
                                     <?php else : ?>
                                         <span class="text-muted">-</span>
                                     <?php endif; ?>
                                 </td>
-                                <td><?php echo esc_html( Trade_Journal_Shortcodes::format_rr( $trade['rr'] ) ); ?></td>
-                                <td>
-                                    <div class="btn-group btn-group-sm">
-                                        <button type="button" class="btn btn-outline-primary btn-edit" 
+                                <td class="py-2 align-middle text-end fs-9 fw-medium text-center">
+                                    <?php echo esc_html( isset( $trade['rr'] ) && $trade['rr'] !== null ? number_format( (float) $trade['rr'], 1 ) : '-' ); ?>
+                                </td>
+                                <td class="py-2 align-middle text-center">
+                                    <?php if ( isset( $trade['tf'] ) && ! empty( $trade['tf'] ) ) : ?>
+                                        <?php 
+                                        $timeframes = is_string( $trade['tf'] ) ? json_decode( $trade['tf'], true ) : $trade['tf'];
+                                        if ( is_array( $timeframes ) ) :
+                                            foreach ( $timeframes as $tf ) : ?>
+                                                <span class="badge badge-sm rounded-pill badge-phoenix badge-phoenix-info me-1"><?php echo esc_html( $tf ); ?></span>
+                                            <?php endforeach;
+                                        else : ?>
+                                            <span class="text-muted">-</span>
+                                        <?php endif; ?>
+                                    <?php else : ?>
+                                        <span class="text-muted">-</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td class="py-2 align-middle fs-9 text-center">
+                                    <?php if ( isset( $trade['chart_htf'] ) && ! empty( $trade['chart_htf'] ) ) : ?>
+                                        <a href="<?php echo esc_url( $trade['chart_htf'] ); ?>" target="_blank" rel="noopener noreferrer" class="text-primary text-decoration-none">
+                                            <span class="badge badge-phoenix badge-phoenix-primary">Image <i class="fa fa-external-link" aria-hidden="true"></i></span>
+                                        </a>
+                                    <?php else : ?>
+                                        <span class="text-muted">-</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td class="py-2 align-middle fs-9 text-center">
+                                    <?php if ( isset( $trade['chart_ltf'] ) && ! empty( $trade['chart_ltf'] ) ) : ?>
+                                        <a href="<?php echo esc_url( $trade['chart_ltf'] ); ?>" target="_blank" rel="noopener noreferrer" class="text-primary text-decoration-none">
+                                            <span class="badge badge-phoenix badge-phoenix-primary">Image <i class="fa fa-external-link" aria-hidden="true"></i></span>
+                                        </a>
+                                    <?php else : ?>
+                                        <span class="text-muted">-</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td class="py-2 align-middle white-space-nowrap text-center">
+                                    <div class="btn-group btn-group-sm ydcoza-btn-group-tiny" role="group" aria-label="Trade Actions">
+                                        <?php if ( isset( $trade['comments'] ) && ! empty( $trade['comments'] ) ) : ?>
+                                            <button type="button" class="btn btn-subtle-info" 
+                                                    data-bs-toggle="tooltip" 
+                                                    data-bs-placement="top" 
+                                                    data-bs-html="true"
+                                                    title="<?php echo esc_attr( $trade['comments'] ); ?>">
+                                                <i class="fas fa-comment"></i>
+                                            </button>
+                                        <?php endif; ?>
+                                        <button type="button" class="btn btn-subtle-primary btn-edit" 
                                                 data-trade-id="<?php echo esc_attr( $trade['id'] ); ?>"
-                                                title="<?php esc_attr_e( 'Edit Trade', 'trade-journal-wp' ); ?>">
+                                                title="<?php esc_attr_e( 'Edit', 'trade-journal-wp' ); ?>">
                                             <i class="fas fa-edit"></i>
                                         </button>
-                                        <button type="button" class="btn btn-outline-danger btn-delete" 
+                                        <button type="button" class="btn btn-subtle-danger btn-delete" 
                                                 data-trade-id="<?php echo esc_attr( $trade['id'] ); ?>"
-                                                title="<?php esc_attr_e( 'Delete Trade', 'trade-journal-wp' ); ?>">
+                                                title="<?php esc_attr_e( 'Delete', 'trade-journal-wp' ); ?>">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </div>
@@ -168,7 +253,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                         <?php endforeach; ?>
                     <?php else : ?>
                         <tr id="noTradesRow">
-                            <td colspan="10" class="text-center text-muted py-4">
+                            <td colspan="14" class="text-center text-muted py-4">
                                 <?php esc_html_e( 'No trades found. Start by adding your first trade!', 'trade-journal-wp' ); ?>
                             </td>
                         </tr>

@@ -17,6 +17,14 @@
     // Initialize when document is ready
     $(document).ready(function() {
         init();
+        
+        // Initialize Bootstrap tooltips
+        if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        }
     });
 
     /**
@@ -659,15 +667,15 @@
     /**
      * Setup auto-refresh for statistics
      */
-    function setupAutoRefresh() {
-        $('#autoRefreshStats').on('change', function() {
-            if (this.checked) {
-                setInterval(function() {
-                    updateStatistics();
-                }, 30000); // Refresh every 30 seconds
-            }
-        });
-    }
+    // function setupAutoRefresh() {
+    //     $('#autoRefreshStats').on('change', function() {
+    //         if (this.checked) {
+    //             setInterval(function() {
+    //                 updateStatistics();
+    //             }, 30000); // Refresh every 30 seconds
+    //         }
+    //     });
+    // }
 
     /**
      * Update trades count display

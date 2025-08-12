@@ -330,12 +330,16 @@ class Trade_Journal_Shortcodes {
     /**
      * Format price value
      */
-    public static function format_price( $value, $decimals = 5 ) {
+    public static function format_price( $value, $decimals = 3 ) {
         if ( null === $value || '' === $value ) {
             return '-';
         }
         
-        return number_format( (float) $value, $decimals );
+        // Truncate to specified decimals without rounding
+        $multiplier = pow( 10, $decimals );
+        $truncated = floor( (float) $value * $multiplier ) / $multiplier;
+        
+        return number_format( $truncated, $decimals );
     }
 
     /**
