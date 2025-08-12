@@ -77,55 +77,55 @@ if ( ! defined( 'ABSPATH' ) ) {
                 <thead class="text-body">
                     <tr>
                         <th class="sort ps-3 pe-1 align-middle white-space-nowrap" data-sort="date">
-                            <i class="fas fa-calendar-alt text-primary me-1"></i>
+                            <i class="fas fa-calendar-alt text-primary me-1 fs-10"></i>
                             <?php esc_html_e( 'Date', 'trade-journal-wp' ); ?>
                         </th>
                         <th class="sort pe-1 align-middle white-space-nowrap" data-sort="time">
-                            <i class="fas fa-clock text-info me-1"></i>
+                            <i class="fas fa-clock text-info me-1 fs-10"></i>
                             <?php esc_html_e( 'Time', 'trade-journal-wp' ); ?>
                         </th>
                         <th class="sort pe-1 align-middle white-space-nowrap text-center" data-sort="market" style="min-width: 90px;">
-                            <i class="fas fa-coins text-primary me-1"></i>
+                            <i class="fas fa-coins text-primary me-1 fs-10"></i>
                             <?php esc_html_e( 'Market', 'trade-journal-wp' ); ?>
                         </th>
                         <th class="sort pe-1 align-middle white-space-nowrap text-center" data-sort="session" style="min-width: 90px;">
-                            <i class="fas fa-globe text-info me-1"></i>
+                            <i class="fas fa-globe text-info me-1 fs-10"></i>
                             <?php esc_html_e( 'Session', 'trade-journal-wp' ); ?>
                         </th>
                         <th class="sort pe-1 align-middle white-space-nowrap" data-sort="direction" style="min-width: 90px;">
-                            <i class="fas fa-arrows-alt-v text-warning me-1"></i>
+                            <i class="fas fa-arrows-alt-v text-warning me-1 fs-10"></i>
                             <?php esc_html_e( 'Direction', 'trade-journal-wp' ); ?>
                         </th>
                         <th class="sort pe-1 align-middle white-space-nowrap text-end" data-sort="entry_price" style="min-width: 110px;">
-                            <i class="fas fa-sign-in-alt text-success me-1"></i>
+                            <i class="fas fa-sign-in-alt text-success me-1 fs-10"></i>
                             <?php esc_html_e( 'Entry Price', 'trade-journal-wp' ); ?>
                         </th>
                         <th class="sort pe-1 align-middle white-space-nowrap text-end" data-sort="exit_price" style="min-width: 110px;">
-                            <i class="fas fa-sign-out-alt text-danger me-1"></i>
+                            <i class="fas fa-sign-out-alt text-danger me-1 fs-10"></i>
                             <?php esc_html_e( 'Exit Price', 'trade-journal-wp' ); ?>
                         </th>
                         <th class="sort pe-1 align-middle white-space-nowrap text-center" data-sort="outcome" style="min-width: 100px;">
-                            <i class="fas fa-trophy text-warning me-1"></i>
+                            <i class="fas fa-trophy text-warning me-1 fs-10"></i>
                             <?php esc_html_e( 'Outcome', 'trade-journal-wp' ); ?>
                         </th>
                         <th class="sort pe-1 align-middle white-space-nowrap text-center" data-sort="pl_percent" style="min-width: 90px;">
-                            <i class="fas fa-percentage text-purple me-1"></i>
+                            <i class="fas fa-percentage text-success me-1 fs-10"></i>
                             <?php esc_html_e( 'P/L %', 'trade-journal-wp' ); ?>
                         </th>
                         <th class="sort pe-1 align-middle white-space-nowrap text-center" data-sort="rr" style="min-width: 90px;">
-                            <i class="fas fa-balance-scale text-purple me-1"></i>
+                            <i class="fas fa-balance-scale me-1 fs-10"></i>
                             <?php esc_html_e( 'RR', 'trade-journal-wp' ); ?>
                         </th>
                         <th class="pe-1 align-middle white-space-nowrap text-center" style="min-width: 100px;">
-                            <i class="fas fa-chart-line text-info me-1"></i>
+                            <i class="fas fa-chart-line text-info me-1 fs-10"></i>
                             <?php esc_html_e( 'TF', 'trade-journal-wp' ); ?>
                         </th>
                         <th class="pe-1 align-middle white-space-nowrap text-center" style="min-width: 100px;">
-                            <i class="fas fa-chart-bar text-warning me-1"></i>
+                            <i class="fas fa-chart-bar text-warning me-1 fs-10"></i>
                             <?php esc_html_e( 'Chart HTF', 'trade-journal-wp' ); ?>
                         </th>
                         <th class="pe-1 align-middle white-space-nowrap text-center" style="min-width: 100px;">
-                            <i class="fas fa-chart-area text-warning me-1"></i>
+                            <i class="fas fa-chart-area text-warning me-1 fs-10"></i>
                             <?php esc_html_e( 'Chart LTF', 'trade-journal-wp' ); ?>
                         </th>
                         <th class="no-sort text-center" style="min-width: 150px;"><?php // esc_html_e( 'Actions', 'trade-journal-wp' ); ?></th>
@@ -232,20 +232,20 @@ if ( ! defined( 'ABSPATH' ) ) {
                                             <button type="button" class="btn btn-subtle-info" 
                                                     data-bs-toggle="tooltip" 
                                                     data-bs-placement="top" 
-                                                    data-bs-html="true"
+                                                    data-bs-html="false"
                                                     title="<?php echo esc_attr( $trade['comments'] ); ?>">
-                                                <i class="fas fa-comment"></i>
+                                                <i class="fas fa-comment opacity-75"></i>
                                             </button>
                                         <?php endif; ?>
                                         <button type="button" class="btn btn-subtle-primary btn-edit" 
                                                 data-trade-id="<?php echo esc_attr( $trade['id'] ); ?>"
                                                 title="<?php esc_attr_e( 'Edit', 'trade-journal-wp' ); ?>">
-                                            <i class="fas fa-edit"></i>
+                                            <i class="fas fa-edit opacity-75"></i>
                                         </button>
                                         <button type="button" class="btn btn-subtle-danger btn-delete" 
                                                 data-trade-id="<?php echo esc_attr( $trade['id'] ); ?>"
                                                 title="<?php esc_attr_e( 'Delete', 'trade-journal-wp' ); ?>">
-                                            <i class="fas fa-trash"></i>
+                                            <i class="fas fa-trash opacity-75"></i>
                                         </button>
                                     </div>
                                 </td>

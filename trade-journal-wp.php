@@ -601,7 +601,7 @@ class Trade_Journal_WP {
         $sanitized['tf'] = is_array( $data['tf'] ?? null ) ? array_filter( $data['tf'] ) : array();
         $sanitized['chart_htf'] = esc_url_raw( $data['chart_htf'] ?? $data['chartHtf'] ?? '' );
         $sanitized['chart_ltf'] = esc_url_raw( $data['chart_ltf'] ?? $data['chartLtf'] ?? '' );
-        $sanitized['comments'] = sanitize_textarea_field( $data['comments'] ?? '' );
+        $sanitized['comments'] = sanitize_textarea_field( wp_unslash( $data['comments'] ?? '' ) );
         
         return $sanitized;
     }

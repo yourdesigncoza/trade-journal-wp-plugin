@@ -39,7 +39,7 @@ if ( isset( $_POST['submit_trade'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'ad
         'tf'          => isset( $_POST['tf'] ) && is_array( $_POST['tf'] ) ? array_map( 'sanitize_text_field', $_POST['tf'] ) : array(),
         'chart_htf'   => esc_url_raw( $_POST['chart_htf'] ),
         'chart_ltf'   => esc_url_raw( $_POST['chart_ltf'] ),
-        'comments'    => sanitize_textarea_field( $_POST['comments'] ),
+        'comments'    => sanitize_textarea_field( wp_unslash( $_POST['comments'] ) ),
     );
 
     if ( $is_edit ) {

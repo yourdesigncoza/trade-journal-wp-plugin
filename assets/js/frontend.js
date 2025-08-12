@@ -415,12 +415,12 @@
                 </td>
                 <td class="py-2 align-middle white-space-nowrap text-center">
                     <div class="btn-group btn-group-sm ydcoza-btn-group-tiny" role="group" aria-label="Trade Actions">
-                        ${trade.comments ? `<button type="button" class="btn btn-subtle-info" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" title="${trade.comments}"><i class="fas fa-comment"></i></button>` : ''}
+                        ${trade.comments ? `<button type="button" class="btn btn-subtle-info" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="false" title="${escapeHtml(trade.comments)}"><i class="fas fa-comment opacity-75"></i></button>` : ''}
                         <button type="button" class="btn btn-subtle-primary btn-edit" data-trade-id="${trade.id}" title="Edit">
-                            <i class="fas fa-edit"></i>
+                            <i class="fas fa-edit opacity-75"></i>
                         </button>
                         <button type="button" class="btn btn-subtle-danger btn-delete" data-trade-id="${trade.id}" title="Delete">
-                            <i class="fas fa-trash"></i>
+                            <i class="fas fa-trash opacity-75"></i>
                         </button>
                     </div>
                 </td>
@@ -931,6 +931,16 @@
     }
 
     // Utility functions
+    function escapeHtml(unsafe) {
+        if (!unsafe) return '';
+        return unsafe
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
     function formatDate(date) {
         return new Date(date).toLocaleDateString('en-US', { 
             month: 'short', 
