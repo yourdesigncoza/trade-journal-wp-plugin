@@ -177,6 +177,13 @@
                     showMessage(tradeJournalWP.strings.saveSuccess, 'success');
                     $form[0].reset();
                     clearDraft();
+                    
+                    // Show loading in table during refresh
+                    const tbody = $('#tradesTable tbody');
+                    if (tbody.length > 0) {
+                        tbody.html('<tr><td colspan="14" class="text-center py-4"><i class="fas fa-spinner fa-spin me-2"></i>Refreshing trades...</td></tr>');
+                    }
+                    
                     loadTrades();
                     updateStatistics();
                 } else {
@@ -307,10 +314,10 @@
      * Display trades in table
      */
     function displayTrades() {
-        const tbody = $('#tradesTableBody');
+        const tbody = $('#tradesTable tbody');
         
         if (filteredTrades.length === 0) {
-            tbody.html('<tr id="noTradesRow"><td colspan="10" class="text-center text-muted py-4">No trades found.</td></tr>');
+            tbody.html('<tr id="noTradesRow"><td colspan="14" class="text-center text-muted py-4">No trades found. Start by adding your first trade!</td></tr>');
             return;
         }
 
@@ -326,6 +333,14 @@
 
         tbody.html(html);
         updatePagination();
+        
+        // Initialize Bootstrap tooltips
+        if (window.bootstrap && window.bootstrap.Tooltip) {
+            const tooltips = tbody.find('[data-bs-toggle="tooltip"]');
+            tooltips.each(function() {
+                new bootstrap.Tooltip(this);
+            });
+        }
     }
 
     /**
@@ -333,26 +348,78 @@
      */
     function buildTradeRow(trade) {
         const outcomeClass = getOutcomeBadgeClass(trade.outcome);
-        const directionClass = trade.direction === 'LONG' ? 'bg-success' : 'bg-danger';
+        const directionClass = trade.direction === 'LONG' ? 'badge-phoenix-success' : 'badge-phoenix-danger';
         const plClass = trade.pl_percent >= 0 ? 'text-success' : 'text-danger';
+        const plPrefix = trade.pl_percent >= 0 ? '+' : '';
+        
+        // Build timeframes badges
+        let timeframesHtml = '<span class="text-muted">-</span>';
+        if (trade.tf && trade.tf.length > 0) {
+            let timeframes = Array.isArray(trade.tf) ? trade.tf : JSON.parse(trade.tf || '[]');
+            if (timeframes.length > 0) {
+                timeframesHtml = timeframes.map(tf => 
+                    `<span class="badge badge-sm rounded-pill badge-phoenix badge-phoenix-info me-1">${tf}</span>`
+                ).join('');
+            }
+        }
+        
+        // Build chart links
+        const chartHTFHtml = trade.chart_htf ? 
+            `<a href="${trade.chart_htf}" target="_blank" rel="noopener noreferrer" class="text-primary text-decoration-none">
+                <span class="badge badge-phoenix badge-phoenix-primary">Image <i class="fa fa-external-link" aria-hidden="true"></i></span>
+            </a>` : '<span class="text-muted">-</span>';
+        
+        const chartLTFHtml = trade.chart_ltf ? 
+            `<a href="${trade.chart_ltf}" target="_blank" rel="noopener noreferrer" class="text-primary text-decoration-none">
+                <span class="badge badge-phoenix badge-phoenix-primary">Image <i class="fa fa-external-link" aria-hidden="true"></i></span>
+            </a>` : '<span class="text-muted">-</span>';
 
         return `
-            <tr data-trade-id="${trade.id}" class="fade-in">
-                <td>${formatDate(trade.date)}</td>
-                <td><span class="badge bg-primary">${trade.market}</span></td>
-                <td>${getSessionLabel(trade.session)}</td>
-                <td><span class="badge ${directionClass}">${trade.direction}</span></td>
-                <td>${formatPrice(trade.entry_price)}</td>
-                <td>${formatPrice(trade.exit_price)}</td>
-                <td>${trade.outcome ? `<span class="badge ${outcomeClass}">${getOutcomeLabel(trade.outcome)}</span>` : '<span class="text-muted">-</span>'}</td>
-                <td>${trade.pl_percent ? `<span class="${plClass}">${formatPercentage(trade.pl_percent)}</span>` : '<span class="text-muted">-</span>'}</td>
-                <td>${formatRR(trade.rr)}</td>
-                <td>
-                    <div class="btn-group btn-group-sm">
-                        <button type="button" class="btn btn-outline-primary btn-edit" data-trade-id="${trade.id}" title="Edit Trade">
+            <tr class="btn-reveal-trigger" data-trade-id="${trade.id}">
+                <td class="py-2 ps-3 align-middle white-space-nowrap fs-9">
+                    ${formatDate(trade.date)}
+                </td>
+                <td class="py-2 align-middle fs-9">
+                    ${trade.time || '-'}
+                </td>
+                <td class="py-2 align-middle text-center">
+                    <span class="badge badge-sm rounded-pill badge-phoenix badge-phoenix-primary text-center">${trade.market}</span>
+                </td>
+                <td class="py-2 align-middle fs-9 text-center">
+                    ${getSessionLabel(trade.session)}
+                </td>
+                <td class="py-2 align-middle text-center">
+                    <span class="badge badge-sm rounded-pill badge-phoenix ${directionClass}">
+                        ${trade.direction}
+                    </span>
+                </td>
+                <td class="py-2 align-middle fs-9 text-end">${formatPrice(trade.entry_price)}</td>
+                <td class="py-2 align-middle fs-9 text-end">${formatPrice(trade.exit_price)}</td>
+                <td class="py-2 align-middle text-center white-space-nowrap">
+                    ${trade.outcome ? `<span class="badge badge-sm rounded-pill badge-phoenix text-center ${outcomeClass}">${getOutcomeLabel(trade.outcome)}</span>` : '<span class="text-muted">-</span>'}
+                </td>
+                <td class="py-2 align-middle text-end fs-9 fw-medium text-center">
+                    ${trade.pl_percent !== null && trade.pl_percent !== undefined ? `<span class="${plClass}">${plPrefix}${parseFloat(trade.pl_percent).toFixed(2)}%</span>` : '<span class="text-muted">-</span>'}
+                </td>
+                <td class="py-2 align-middle text-end fs-9 fw-medium text-center">
+                    ${formatRR(trade.rr)}
+                </td>
+                <td class="py-2 align-middle text-center">
+                    ${timeframesHtml}
+                </td>
+                <td class="py-2 align-middle fs-9 text-center">
+                    ${chartHTFHtml}
+                </td>
+                <td class="py-2 align-middle fs-9 text-center">
+                    ${chartLTFHtml}
+                </td>
+                <td class="py-2 align-middle white-space-nowrap text-center">
+                    <div class="btn-group btn-group-sm ydcoza-btn-group-tiny" role="group" aria-label="Trade Actions">
+                        ${trade.comments ? `<button type="button" class="btn btn-subtle-info" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" title="${trade.comments}"><i class="fas fa-comment"></i></button>` : ''}
+                        <button type="button" class="btn btn-subtle-primary btn-edit" data-trade-id="${trade.id}" title="Edit">
                             <i class="fas fa-edit"></i>
                         </button>
-                        <button type="button" class="btn btn-outline-danger btn-delete" data-trade-id="${trade.id}" title="Delete Trade">
+                        <button type="button" class="btn btn-subtle-danger btn-delete" data-trade-id="${trade.id}" title="Delete">
                             <i class="fas fa-trash"></i>
                         </button>
                     </div>
@@ -581,6 +648,11 @@
     function saveEditedTrade() {
         const form = $('#editTradeForm');
         const formData = new FormData(form[0]);
+        const saveBtn = $('#saveEditTrade');
+        
+        // Show loading state
+        saveBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Saving...');
+        
         formData.append('action', 'trade_journal_update_trade');
         formData.append('nonce', tradeJournalWP.nonce);
         formData.append('id', $('#editTradeId').val());
@@ -595,6 +667,11 @@
                 if (response.success) {
                     $('#editTradeModal').modal('hide');
                     showMessage('Trade updated successfully!', 'success');
+                    
+                    // Show loading in table during refresh
+                    const tbody = $('#tradesTable tbody');
+                    tbody.html('<tr><td colspan="14" class="text-center py-4"><i class="fas fa-spinner fa-spin me-2"></i>Refreshing trades...</td></tr>');
+                    
                     loadTrades();
                     updateStatistics();
                 } else {
@@ -603,6 +680,10 @@
             },
             error: function() {
                 showMessage('Failed to update trade', 'danger');
+            },
+            complete: function() {
+                // Reset button state
+                saveBtn.prop('disabled', false).html('<i class="fas fa-save me-2"></i>Save Changes');
             }
         });
     }
@@ -622,6 +703,11 @@
             success: function(response) {
                 if (response.success) {
                     showMessage(tradeJournalWP.strings.deleteSuccess, 'success');
+                    
+                    // Show loading in table during refresh
+                    const tbody = $('#tradesTable tbody');
+                    tbody.html('<tr><td colspan="14" class="text-center py-4"><i class="fas fa-spinner fa-spin me-2"></i>Refreshing trades...</td></tr>');
+                    
                     loadTrades();
                     updateStatistics();
                 } else {
@@ -854,7 +940,13 @@
     }
 
     function formatPrice(price) {
-        return price ? parseFloat(price).toFixed(5) : '-';
+        if (!price || price === null || price === '') return '-';
+        
+        // Truncate to 3 decimals without rounding (like PHP)
+        const multiplier = Math.pow(10, 3);
+        const truncated = Math.floor(parseFloat(price) * multiplier) / multiplier;
+        
+        return truncated.toFixed(3);
     }
 
     function formatPercentage(value) {
@@ -862,17 +954,19 @@
     }
 
     function formatRR(value) {
-        return value ? parseFloat(value).toFixed(2) + ':1' : '-';
+        if (!value || value === null || value === '') return '-';
+        
+        return parseFloat(value).toFixed(2) + ':1';
     }
 
     function getOutcomeBadgeClass(outcome) {
         const classes = {
-            'W': 'bg-success',
-            'L': 'bg-danger',
-            'BE': 'bg-secondary',
-            'C': 'bg-warning'
+            'W': 'badge-phoenix-success',
+            'L': 'badge-phoenix-danger', 
+            'BE': 'badge-phoenix-secondary',
+            'C': 'badge-phoenix-warning'
         };
-        return classes[outcome] || 'bg-secondary';
+        return classes[outcome] || 'badge-phoenix-secondary';
     }
 
     function getOutcomeLabel(outcome) {
