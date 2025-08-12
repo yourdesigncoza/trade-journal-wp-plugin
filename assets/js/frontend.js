@@ -383,11 +383,28 @@
      * Generate edit form fields
      */
     function generateEditFormFields(trade) {
+        // Parse timeframes if they exist
+        let selectedTimeframes = [];
+        if (trade.tf) {
+            try {
+                selectedTimeframes = typeof trade.tf === 'string' ? JSON.parse(trade.tf) : trade.tf;
+                if (!Array.isArray(selectedTimeframes)) {
+                    selectedTimeframes = [];
+                }
+            } catch (e) {
+                selectedTimeframes = [];
+            }
+        }
+
         return `
-            <div class="row g-3 mb-3">
-                <div class="col-md-6">
-                    <label class="form-label">Market</label>
-                    <select class="form-select" name="market" required>
+            <!-- Trade Basics Section -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-3">
+                    <label class="form-label">
+                        <i class="fas fa-globe me-2 text-primary"></i>Market
+                    </label>
+                    <select class="form-select form-select-sm" name="market" required>
+                        <option value="">Select an option</option>
                         <option value="XAUUSD" ${trade.market === 'XAUUSD' ? 'selected' : ''}>XAUUSD</option>
                         <option value="EU" ${trade.market === 'EU' ? 'selected' : ''}>EURUSD</option>
                         <option value="GU" ${trade.market === 'GU' ? 'selected' : ''}>GBPUSD</option>
@@ -396,37 +413,61 @@
                         <option value="NAS100" ${trade.market === 'NAS100' ? 'selected' : ''}>NAS100</option>
                     </select>
                 </div>
-                <div class="col-md-6">
-                    <label class="form-label">Session</label>
-                    <select class="form-select" name="session" required>
+                <div class="col-md-3">
+                    <label class="form-label">
+                        <i class="fas fa-clock me-2 text-primary"></i>Session
+                    </label>
+                    <select class="form-select form-select-sm" name="session" required>
+                        <option value="">Select an option</option>
                         <option value="LO" ${trade.session === 'LO' ? 'selected' : ''}>London</option>
                         <option value="NY" ${trade.session === 'NY' ? 'selected' : ''}>New York</option>
                         <option value="AS" ${trade.session === 'AS' ? 'selected' : ''}>Asia</option>
                     </select>
                 </div>
-            </div>
-            <div class="row g-3 mb-3">
-                <div class="col-md-6">
-                    <label class="form-label">Date</label>
-                    <input type="date" class="form-control" name="date" value="${trade.date}" required>
+                <div class="col-md-3">
+                    <label class="form-label">
+                        <i class="fas fa-calendar me-2 text-primary"></i>Date
+                    </label>
+                    <input type="date" class="form-control form-control-sm" name="date" value="${trade.date}" required>
                 </div>
-                <div class="col-md-6">
-                    <label class="form-label">Time</label>
-                    <input type="time" class="form-control" name="time" value="${trade.time || ''}">
+                <div class="col-md-3">
+                    <label class="form-label">
+                        <i class="fas fa-clock me-2 text-primary"></i>Time
+                    </label>
+                    <input type="time" class="form-control form-control-sm" name="time" value="${trade.time || ''}">
                 </div>
             </div>
-            <div class="row g-3 mb-3">
-                <div class="col-md-6">
-                    <label class="form-label">Direction</label>
-                    <select class="form-select" name="direction" required>
+
+            <!-- Performance Section -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-3">
+                    <label class="form-label">
+                        <i class="fas fa-trending-up me-2 text-success"></i>Direction
+                    </label>
+                    <select class="form-select form-select-sm" name="direction" required>
+                        <option value="">Select an option</option>
                         <option value="LONG" ${trade.direction === 'LONG' ? 'selected' : ''}>Long</option>
                         <option value="SHORT" ${trade.direction === 'SHORT' ? 'selected' : ''}>Short</option>
                     </select>
                 </div>
-                <div class="col-md-6">
-                    <label class="form-label">Outcome</label>
-                    <select class="form-select" name="outcome">
-                        <option value="">Select outcome</option>
+                <div class="col-md-3">
+                    <label class="form-label">
+                        <i class="fas fa-dollar-sign me-2 text-success"></i>Entry Price
+                    </label>
+                    <input type="number" step="0.00001" class="form-control form-control-sm" name="entry_price" value="${trade.entry_price || ''}" placeholder="0.00000">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">
+                        <i class="fas fa-dollar-sign me-2 text-success"></i>Exit Price
+                    </label>
+                    <input type="number" step="0.00001" class="form-control form-control-sm" name="exit_price" value="${trade.exit_price || ''}" placeholder="0.00000">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">
+                        <i class="fas fa-chart-bar me-2 text-success"></i>Outcome
+                    </label>
+                    <select class="form-select form-select-sm" name="outcome">
+                        <option value="">Select an option</option>
                         <option value="W" ${trade.outcome === 'W' ? 'selected' : ''}>Win</option>
                         <option value="L" ${trade.outcome === 'L' ? 'selected' : ''}>Loss</option>
                         <option value="BE" ${trade.outcome === 'BE' ? 'selected' : ''}>Break Even</option>
@@ -434,30 +475,101 @@
                     </select>
                 </div>
             </div>
-            <div class="row g-3 mb-3">
-                <div class="col-md-6">
-                    <label class="form-label">Entry Price</label>
-                    <input type="number" step="0.00001" class="form-control" name="entry_price" value="${trade.entry_price || ''}">
+
+            <!-- Metrics Section -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-3">
+                    <label class="form-label">
+                        <i class="fas fa-chart-bar me-2 text-info"></i>P/L %
+                    </label>
+                    <input type="number" step="0.01" class="form-control form-control-sm" name="pl_percent" value="${trade.pl_percent || ''}" placeholder="0.00">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">
+                        <i class="fas fa-chart-bar me-2 text-info"></i>RR
+                    </label>
+                    <input type="number" step="0.01" class="form-control form-control-sm" name="rr" value="${trade.rr || ''}" placeholder="1.0">
                 </div>
                 <div class="col-md-6">
-                    <label class="form-label">Exit Price</label>
-                    <input type="number" step="0.00001" class="form-control" name="exit_price" value="${trade.exit_price || ''}">
+                    <label class="form-label">
+                        <i class="fas fa-search me-2 text-info"></i>Timeframes
+                    </label>
+                    <div class="row g-2">
+                        <div class="col-auto">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" name="tf[]" value="M1" id="editTfM1" ${selectedTimeframes.includes('M1') ? 'checked' : ''}>
+                                <label class="form-check-label" for="editTfM1">M1</label>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" name="tf[]" value="M5" id="editTfM5" ${selectedTimeframes.includes('M5') ? 'checked' : ''}>
+                                <label class="form-check-label" for="editTfM5">M5</label>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" name="tf[]" value="M15" id="editTfM15" ${selectedTimeframes.includes('M15') ? 'checked' : ''}>
+                                <label class="form-check-label" for="editTfM15">M15</label>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" name="tf[]" value="M30" id="editTfM30" ${selectedTimeframes.includes('M30') ? 'checked' : ''}>
+                                <label class="form-check-label" for="editTfM30">M30</label>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" name="tf[]" value="H1" id="editTfH1" ${selectedTimeframes.includes('H1') ? 'checked' : ''}>
+                                <label class="form-check-label" for="editTfH1">H1</label>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" name="tf[]" value="H4" id="editTfH4" ${selectedTimeframes.includes('H4') ? 'checked' : ''}>
+                                <label class="form-check-label" for="editTfH4">H4</label>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" name="tf[]" value="D1" id="editTfD1" ${selectedTimeframes.includes('D1') ? 'checked' : ''}>
+                                <label class="form-check-label" for="editTfD1">D1</label>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" name="tf[]" value="W1" id="editTfW1" ${selectedTimeframes.includes('W1') ? 'checked' : ''}>
+                                <label class="form-check-label" for="editTfW1">W1</label>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="row g-3 mb-3">
+
+            <!-- Charts Section -->
+            <div class="row g-3 mb-4">
                 <div class="col-md-6">
-                    <label class="form-label">P/L %</label>
-                    <input type="number" step="0.01" class="form-control" name="pl_percent" value="${trade.pl_percent || ''}">
+                    <label class="form-label">
+                        <i class="fas fa-chart-line me-2 text-warning"></i>Chart HTF
+                    </label>
+                    <input type="url" class="form-control form-control-sm" name="chart_htf" value="${trade.chart_htf || ''}" placeholder="https://www.tradingview.com/...">
                 </div>
                 <div class="col-md-6">
-                    <label class="form-label">RR</label>
-                    <input type="number" step="0.01" class="form-control" name="rr" value="${trade.rr || ''}">
+                    <label class="form-label">
+                        <i class="fas fa-chart-area me-2 text-warning"></i>Chart LTF
+                    </label>
+                    <input type="url" class="form-control form-control-sm" name="chart_ltf" value="${trade.chart_ltf || ''}" placeholder="https://www.tradingview.com/...">
                 </div>
             </div>
-            <div class="row g-3 mb-3">
+
+            <!-- Comments Section -->
+            <div class="row g-3 mb-4">
                 <div class="col-12">
-                    <label class="form-label">Comments</label>
-                    <textarea class="form-control" name="comments" rows="3">${trade.comments || ''}</textarea>
+                    <label class="form-label">
+                        <i class="fas fa-comment me-2 text-info"></i>Comments
+                    </label>
+                    <textarea class="form-control form-control-sm" name="comments" rows="3" placeholder="Add any additional notes about this trade...">${trade.comments || ''}</textarea>
                 </div>
             </div>
         `;

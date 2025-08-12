@@ -296,10 +296,10 @@ if ( ! defined( 'ABSPATH' ) ) {
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                <button type="button" class="btn btn-subtle-secondary" data-bs-dismiss="modal">
                     <?php esc_html_e( 'Cancel', 'trade-journal-wp' ); ?>
                 </button>
-                <button type="button" class="btn btn-primary" id="saveEditTrade">
+                <button type="button" class="btn btn-subtle-primary" id="saveEditTrade">
                     <i class="fas fa-save me-2"></i>
                     <?php esc_html_e( 'Save Changes', 'trade-journal-wp' ); ?>
                 </button>
