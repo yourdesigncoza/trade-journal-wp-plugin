@@ -189,13 +189,13 @@ if ( ! defined( 'ABSPATH' ) ) {
         </div>
 
         <!-- Auto-refresh toggle -->
-        <div class="mt-4">
+        <!-- <div class="mt-4">
             <div class="form-check form-switch">
                 <input class="form-check-input" type="checkbox" id="autoRefreshStats" checked>
                 <label class="form-check-label" for="autoRefreshStats">
-                    <?php esc_html_e( 'Auto-refresh statistics', 'trade-journal-wp' ); ?>
+                    <?php // esc_html_e( 'Auto-refresh statistics', 'trade-journal-wp' ); ?>
                 </label>
             </div>
-        </div>
+        </div> -->
     </div>
 </div>

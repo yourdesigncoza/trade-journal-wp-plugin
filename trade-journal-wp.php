@@ -217,7 +217,7 @@ class Trade_Journal_WP {
             'trade-journal-wp-frontend',
             TRADE_JOURNAL_WP_PLUGIN_URL . 'assets/css/frontend.css',
             array(),
-            TRADE_JOURNAL_WP_VERSION
+            $this->get_asset_version( 'assets/css/frontend.css' )
         );
 
         // Enqueue Bootstrap if not already loaded
@@ -257,7 +257,7 @@ class Trade_Journal_WP {
             'trade-journal-wp-frontend',
             TRADE_JOURNAL_WP_PLUGIN_URL . 'assets/js/frontend.js',
             array( 'jquery' ),
-            TRADE_JOURNAL_WP_VERSION,
+            $this->get_asset_version( 'assets/js/frontend.js' ),
             true
         );
 
@@ -288,14 +288,14 @@ class Trade_Journal_WP {
             'trade-journal-wp-admin',
             TRADE_JOURNAL_WP_PLUGIN_URL . 'assets/css/admin.css',
             array(),
-            TRADE_JOURNAL_WP_VERSION
+            $this->get_asset_version( 'assets/css/admin.css' )
         );
 
         wp_enqueue_script(
             'trade-journal-wp-admin',
             TRADE_JOURNAL_WP_PLUGIN_URL . 'assets/js/admin.js',
             array( 'jquery' ),
-            TRADE_JOURNAL_WP_VERSION,
+            $this->get_asset_version( 'assets/js/admin.js' ),
             true
         );
     }
@@ -557,6 +557,20 @@ class Trade_Journal_WP {
         } catch ( Exception $e ) {
             wp_send_json_error( 'Connection test failed: ' . $e->getMessage() );
         }
+    }
+
+    /**
+     * Get dynamic version for assets based on file modification time
+     */
+    private function get_asset_version( $file_path ) {
+        $full_path = TRADE_JOURNAL_WP_PLUGIN_DIR . ltrim( $file_path, '/' );
+        
+        if ( file_exists( $full_path ) ) {
+            return date( 'YmdHis', filemtime( $full_path ) );
+        }
+        
+        // Fallback to current timestamp if file doesn't exist
+        return date( 'YmdHis' );
     }
 
     /**

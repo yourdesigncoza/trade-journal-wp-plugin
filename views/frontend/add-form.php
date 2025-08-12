@@ -182,7 +182,7 @@ if ( ! defined( 'ABSPATH' ) ) {
             <!-- Submit Button -->
             <div class="row">
                 <div class="col-12">
-                    <button type="submit" class="btn btn-primary px-5" id="submitBtn">
+                    <button type="submit" class="btn btn-subtle-primary px-5" id="submitBtn">
                         <i class="fas fa-save me-2"></i>
                         <span id="submitText"><?php esc_html_e( 'Save Trade Entry', 'trade-journal-wp' ); ?></span>
                         <span id="submitSpinner" class="spinner-border spinner-border-sm ms-2 d-none"></span>

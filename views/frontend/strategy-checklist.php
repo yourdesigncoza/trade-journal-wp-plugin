@@ -194,7 +194,7 @@ if ( ! defined( 'ABSPATH' ) ) {
             </div>
 
             <!-- Checklist Summary -->
-            <div class="alert alert-light border">
+            <div class="alert alert-subtle-primary">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <strong id="checklistScore">0/16</strong> <?php esc_html_e( 'items completed', 'trade-journal-wp' ); ?>
@@ -208,22 +208,22 @@ if ( ! defined( 'ABSPATH' ) ) {
                         </span>
                     </div>
                 </div>
-                <small class="text-muted mt-2 d-block">
+                <small class="mt-2 d-block">
                     <?php esc_html_e( 'Minimum 80% completion recommended before entering trade', 'trade-journal-wp' ); ?>
                 </small>
             </div>
 
             <!-- Action Buttons -->
             <div class="d-flex gap-2 mt-3">
-                <button type="button" class="btn btn-sm btn-outline-secondary" id="resetChecklist">
+                <button type="button" class="btn btn-sm btn-subtle-secondary" id="resetChecklist">
                     <i class="fas fa-undo me-1"></i>
                     <?php esc_html_e( 'Reset', 'trade-journal-wp' ); ?>
                 </button>
-                <button type="button" class="btn btn-sm btn-outline-primary" id="saveChecklist">
+                <button type="button" class="btn btn-sm btn-subtle-primary" id="saveChecklist">
                     <i class="fas fa-save me-1"></i>
                     <?php esc_html_e( 'Save Checklist', 'trade-journal-wp' ); ?>
                 </button>
-                <button type="button" class="btn btn-sm btn-success" id="proceedToTrade" disabled>
+                <button type="button" class="btn btn-sm btn-subtle-success" id="proceedToTrade" disabled>
                     <i class="fas fa-check me-1"></i>
                     <?php esc_html_e( 'Ready to Trade', 'trade-journal-wp' ); ?>
                 </button>

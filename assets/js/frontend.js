@@ -35,7 +35,7 @@
         setupTableHandlers();
         setupChecklistHandlers();
         loadTrades();
-        setupAutoRefresh();
+        // setupAutoRefresh();
     }
 
     /**
