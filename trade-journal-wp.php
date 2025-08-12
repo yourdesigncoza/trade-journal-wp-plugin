@@ -584,14 +584,23 @@ class Trade_Journal_WP {
         $sanitized['date'] = sanitize_text_field( $data['date'] ?? '' );
         $sanitized['time'] = sanitize_text_field( $data['time'] ?? '' );
         $sanitized['direction'] = sanitize_text_field( $data['direction'] ?? '' );
-        $sanitized['entry_price'] = floatval( $data['entryPrice'] ?? 0 );
-        $sanitized['exit_price'] = floatval( $data['exitPrice'] ?? 0 );
+        // Handle price fields - don't convert empty strings to 0
+        $entry_price_value = $data['entry_price'] ?? $data['entryPrice'] ?? '';
+        $sanitized['entry_price'] = ( $entry_price_value !== '' ) ? floatval( $entry_price_value ) : null;
+        
+        $exit_price_value = $data['exit_price'] ?? $data['exitPrice'] ?? '';
+        $sanitized['exit_price'] = ( $exit_price_value !== '' ) ? floatval( $exit_price_value ) : null;
+        
         $sanitized['outcome'] = sanitize_text_field( $data['outcome'] ?? '' );
-        $sanitized['pl_percent'] = floatval( $data['plPercent'] ?? 0 );
-        $sanitized['rr'] = floatval( $data['rr'] ?? 0 );
-        $sanitized['tf'] = is_array( $data['tf'] ?? null ) ? $data['tf'] : array();
-        $sanitized['chart_htf'] = esc_url_raw( $data['chartHtf'] ?? '' );
-        $sanitized['chart_ltf'] = esc_url_raw( $data['chartLtf'] ?? '' );
+        
+        $pl_percent_value = $data['pl_percent'] ?? $data['plPercent'] ?? '';
+        $sanitized['pl_percent'] = ( $pl_percent_value !== '' ) ? floatval( $pl_percent_value ) : null;
+        
+        $rr_value = $data['rr'] ?? '';
+        $sanitized['rr'] = ( $rr_value !== '' ) ? floatval( $rr_value ) : null;
+        $sanitized['tf'] = is_array( $data['tf'] ?? null ) ? array_filter( $data['tf'] ) : array();
+        $sanitized['chart_htf'] = esc_url_raw( $data['chart_htf'] ?? $data['chartHtf'] ?? '' );
+        $sanitized['chart_ltf'] = esc_url_raw( $data['chart_ltf'] ?? $data['chartLtf'] ?? '' );
         $sanitized['comments'] = sanitize_textarea_field( $data['comments'] ?? '' );
         
         return $sanitized;

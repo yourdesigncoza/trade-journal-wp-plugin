@@ -224,7 +224,15 @@ class Trade_Journal_Database {
             return false;
         }
 
-        $tf = ! empty( $data['tf'] ) ? wp_json_encode( $data['tf'] ) : null;
+        // Handle timeframes field - convert array to JSON
+        $tf = null;
+        if ( ! empty( $data['tf'] ) ) {
+            if ( is_array( $data['tf'] ) ) {
+                $tf = wp_json_encode( $data['tf'] );
+            } else {
+                $tf = $data['tf'];
+            }
+        }
 
         $stmt->bind_param(
             "ssssssddsddssss",
@@ -287,8 +295,13 @@ class Trade_Journal_Database {
 
         foreach ( $updates as $field => $value ) {
             if ( array_key_exists( $field, $allowed_fields ) ) {
-                if ( 'tf' === $field && ! empty( $value ) ) {
-                    $value = wp_json_encode( $value );
+                if ( 'tf' === $field ) {
+                    // Handle timeframes field - convert array to JSON
+                    if ( is_array( $value ) && ! empty( $value ) ) {
+                        $value = wp_json_encode( $value );
+                    } elseif ( empty( $value ) ) {
+                        $value = null;
+                    }
                 } elseif ( in_array( $field, array( 'entry_price', 'exit_price', 'pl_percent', 'rr' ), true ) && '' === $value ) {
                     $value = null;
                 }
