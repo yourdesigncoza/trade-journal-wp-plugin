@@ -51,7 +51,7 @@ if ( isset( $_POST['submit_trade'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'ad
     }
 
     if ( $result ) {
-        echo '<div class="notice notice-success is-dismissible"><p>' . esc_html( $success_message ) . '</p></div>';
+        echo '<div class="alert alert-subtle-success is-dismissible"><p>' . esc_html( $success_message ) . '</p></div>';
         if ( ! $is_edit ) {
             // Clear form data after successful save
             $edit_trade = null;
@@ -60,7 +60,7 @@ if ( isset( $_POST['submit_trade'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'ad
             $edit_trade = $database->get_trade( $edit_trade['id'] );
         }
     } else {
-        echo '<div class="notice notice-error is-dismissible"><p>' . esc_html__( 'Failed to save trade. Please try again.', 'trade-journal-wp' ) . '</p></div>';
+        echo '<div class="alert alert-subtle-danger is-dismissible"><p>' . esc_html__( 'Failed to save trade. Please try again.', 'trade-journal-wp' ) . '</p></div>';
     }
 }
 ?>
