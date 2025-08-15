@@ -34,7 +34,7 @@
         setupFormHandlers();
         setupTableHandlers();
         setupChecklistHandlers();
-        loadTrades();
+        initializeTradesFromDOM();
         // setupAutoRefresh();
     }
 
@@ -224,6 +224,163 @@
                 console.error('Failed to load trades');
             }
         });
+    }
+
+    /**
+     * Initialize trades array from existing DOM table data
+     * This eliminates the need for initial AJAX call
+     */
+    function initializeTradesFromDOM() {
+        trades = [];
+        
+        // Check if we have any trades in the table
+        const tableRows = $('#tradesTable tbody tr[data-trade-id]');
+        
+        if (tableRows.length === 0) {
+            // No trades found, initialize empty state
+            filterTrades();
+            updateStatistics();
+            return;
+        }
+        
+        // Parse each row and extract trade data
+        tableRows.each(function() {
+            const $row = $(this);
+            const tradeId = $row.data('trade-id');
+            
+            if (!tradeId) return; // Skip if no trade ID
+            
+            // Extract data from each cell based on column position
+            const cells = $row.find('td');
+            
+            const trade = {
+                id: tradeId,
+                date: parseDate(cells.eq(0).text().trim()),
+                time: cells.eq(1).text().trim() || null,
+                market: cells.eq(2).find('.badge').text().trim(),
+                session: getSessionCode(cells.eq(3).text().trim()),
+                direction: cells.eq(4).find('.badge').text().trim(),
+                order_type: parseOptionalBadge(cells.eq(5)),
+                strategy: parseOptionalText(cells.eq(6)),
+                stop_loss: parsePrice(cells.eq(7).text().trim()),
+                take_profit: parsePrice(cells.eq(8).text().trim()),
+                entry_price: parsePrice(cells.eq(9).text().trim()),
+                exit_price: parsePrice(cells.eq(10).text().trim()),
+                outcome: parseOptionalBadge(cells.eq(11)),
+                pl_percent: parsePercentage(cells.eq(12)),
+                rr: parseRR(cells.eq(13).text().trim()),
+                absolute_pl: parseAbsolutePL(cells.eq(14)),
+                disciplined: parseYesNo(cells.eq(15)),
+                followed_rules: parseYesNo(cells.eq(16)),
+                rating: parseRating(cells.eq(17)),
+                tf: parseTimeframes(cells.eq(18)),
+                chart_htf: parseChartLink(cells.eq(19)),
+                chart_ltf: parseChartLink(cells.eq(20)),
+                comments: parseComments(cells.eq(21))
+            };
+            
+            trades.push(trade);
+        });
+        
+        // Initialize filters and statistics with the DOM data
+        filterTrades();
+        updateStatistics();
+    }
+
+    // Helper functions for parsing DOM data
+    function parseDate(dateText) {
+        // Convert from "15/08/2025" format to "2025-08-15" format
+        const parts = dateText.split('/');
+        if (parts.length === 3) {
+            return `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+        }
+        return dateText;
+    }
+
+    function getSessionCode(sessionText) {
+        const sessionMap = {
+            'London': 'LO',
+            'New York': 'NY',
+            'Asia': 'AS'
+        };
+        return sessionMap[sessionText] || sessionText;
+    }
+
+    function parseOptionalBadge($cell) {
+        const badge = $cell.find('.badge');
+        return badge.length ? badge.text().trim() : null;
+    }
+
+    function parseOptionalText($cell) {
+        const text = $cell.text().trim();
+        return text === '-' ? null : text;
+    }
+
+    function parsePrice(priceText) {
+        const text = priceText.trim();
+        return text === '-' ? null : parseFloat(text);
+    }
+
+    function parsePercentage($cell) {
+        const span = $cell.find('span:not(.text-muted)');
+        if (span.length) {
+            const text = span.text().replace('%', '').replace('+', '');
+            return parseFloat(text);
+        }
+        return null;
+    }
+
+    function parseRR(rrText) {
+        const text = rrText.trim();
+        return text === '-' ? null : parseFloat(text);
+    }
+
+    function parseAbsolutePL($cell) {
+        const span = $cell.find('span:not(.text-muted)');
+        if (span.length) {
+            const text = span.text().replace('+', '');
+            return parseFloat(text);
+        }
+        return null;
+    }
+
+    function parseYesNo($cell) {
+        const badge = $cell.find('.badge');
+        if (badge.length) {
+            const text = badge.text().trim();
+            return text === 'Yes' ? 'Y' : (text === 'No' ? 'N' : null);
+        }
+        return null;
+    }
+
+    function parseRating($cell) {
+        const stars = $cell.find('span').text();
+        if (stars && stars.includes('★')) {
+            return stars.split('★').length - 1; // Count filled stars
+        }
+        return null;
+    }
+
+    function parseTimeframes($cell) {
+        const badges = $cell.find('.badge');
+        if (badges.length) {
+            const timeframes = [];
+            badges.each(function() {
+                timeframes.push($(this).text().trim());
+            });
+            return timeframes;
+        }
+        return null;
+    }
+
+    function parseChartLink($cell) {
+        const link = $cell.find('a');
+        return link.length ? link.attr('href') : null;
+    }
+
+    function parseComments($cell) {
+        const commentBtn = $cell.find('[title]');
+        return commentBtn.length ? commentBtn.attr('title') : null;
     }
 
     /**
