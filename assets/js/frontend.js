@@ -181,7 +181,7 @@
                     // Show loading in table during refresh
                     const tbody = $('#tradesTable tbody');
                     if (tbody.length > 0) {
-                        tbody.html('<tr><td colspan="14" class="text-center py-4"><i class="fas fa-spinner fa-spin me-2"></i>Refreshing trades...</td></tr>');
+                        tbody.html('<tr><td colspan="22" class="text-center py-4"><i class="fas fa-spinner fa-spin me-2"></i>Refreshing trades...</td></tr>');
                     }
                     
                     loadTrades();
@@ -291,7 +291,7 @@
             if (sortConfig.field === 'date' || sortConfig.field === 'created_at') {
                 aVal = new Date(aVal);
                 bVal = new Date(bVal);
-            } else if (['entry_price', 'exit_price', 'pl_percent', 'rr'].includes(sortConfig.field)) {
+            } else if (['entry_price', 'exit_price', 'pl_percent', 'rr', 'stop_loss', 'take_profit', 'absolute_pl', 'rating'].includes(sortConfig.field)) {
                 aVal = parseFloat(aVal) || 0;
                 bVal = parseFloat(bVal) || 0;
             } else {
@@ -317,7 +317,7 @@
         const tbody = $('#tradesTable tbody');
         
         if (filteredTrades.length === 0) {
-            tbody.html('<tr id="noTradesRow"><td colspan="14" class="text-center text-muted py-4">No trades found. Start by adding your first trade!</td></tr>');
+            tbody.html('<tr id="noTradesRow"><td colspan="22" class="text-center text-muted py-4">No trades found. Start by adding your first trade!</td></tr>');
             return;
         }
 
@@ -393,16 +393,34 @@
                         ${trade.direction}
                     </span>
                 </td>
-                <td class="py-2 align-middle fs-9 text-end">${formatPrice(trade.entry_price)}</td>
-                <td class="py-2 align-middle fs-9 text-end">${formatPrice(trade.exit_price)}</td>
+                <td class="py-2 align-middle text-center">
+                    ${trade.order_type ? `<span class="badge badge-sm rounded-pill badge-phoenix badge-phoenix-info">${trade.order_type}</span>` : '<span class="text-muted">-</span>'}
+                </td>
+                <td class="py-2 align-middle fs-9 text-center">${trade.strategy || '-'}</td>
+                <td class="py-2 align-middle fs-9 text-center">${formatPrice(trade.stop_loss)}</td>
+                <td class="py-2 align-middle fs-9 text-center">${formatPrice(trade.take_profit)}</td>
+                <td class="py-2 align-middle fs-9 text-center">${formatPrice(trade.entry_price)}</td>
+                <td class="py-2 align-middle fs-9 text-center">${formatPrice(trade.exit_price)}</td>
                 <td class="py-2 align-middle text-center white-space-nowrap">
                     ${trade.outcome ? `<span class="badge badge-sm rounded-pill badge-phoenix text-center ${outcomeClass}">${getOutcomeLabel(trade.outcome)}</span>` : '<span class="text-muted">-</span>'}
                 </td>
-                <td class="py-2 align-middle text-end fs-9 fw-medium text-center">
+                <td class="py-2 align-middle text-center fs-9 fw-medium text-center">
                     ${trade.pl_percent !== null && trade.pl_percent !== undefined ? `<span class="${plClass}">${plPrefix}${parseFloat(trade.pl_percent).toFixed(2)}%</span>` : '<span class="text-muted">-</span>'}
                 </td>
-                <td class="py-2 align-middle text-end fs-9 fw-medium text-center">
+                <td class="py-2 align-middle text-center fs-9 fw-medium text-center">
                     ${formatRR(trade.rr)}
+                </td>
+                <td class="py-2 align-middle text-center fs-9 fw-medium">
+                    ${trade.absolute_pl !== null && trade.absolute_pl !== undefined ? `<span class="${trade.absolute_pl >= 0 ? 'text-success' : 'text-danger'}">${trade.absolute_pl >= 0 ? '+' : ''}${parseFloat(trade.absolute_pl).toFixed(2)}</span>` : '<span class="text-muted">-</span>'}
+                </td>
+                <td class="py-2 align-middle text-center">
+                    ${trade.disciplined ? `<span class="badge badge-sm rounded-pill badge-phoenix ${trade.disciplined === 'Y' ? 'badge-phoenix-success' : 'badge-phoenix-danger'}">${trade.disciplined === 'Y' ? 'Yes' : 'No'}</span>` : '<span class="text-muted">-</span>'}
+                </td>
+                <td class="py-2 align-middle text-center">
+                    ${trade.followed_rules ? `<span class="badge badge-sm rounded-pill badge-phoenix ${trade.followed_rules === 'Y' ? 'badge-phoenix-success' : 'badge-phoenix-danger'}">${trade.followed_rules === 'Y' ? 'Yes' : 'No'}</span>` : '<span class="text-muted">-</span>'}
+                </td>
+                <td class="py-2 align-middle text-center">
+                    ${trade.rating ? `<span class="text-warning fs-8">${'★'.repeat(trade.rating)}${'☆'.repeat(5 - trade.rating)}</span>` : '<span class="text-muted">-</span>'}
                 </td>
                 <td class="py-2 align-middle text-center">
                     ${timeframesHtml}
@@ -519,6 +537,43 @@
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">
+                        <i class="fas fa-shopping-cart me-2 text-info"></i>Order Type
+                    </label>
+                    <select class="form-select form-select-sm" name="order_type">
+                        <option value="">Select order type</option>
+                        <option value="Market" ${trade.order_type === 'Market' ? 'selected' : ''}>Market</option>
+                        <option value="Limit" ${trade.order_type === 'Limit' ? 'selected' : ''}>Limit</option>
+                        <option value="Stop" ${trade.order_type === 'Stop' ? 'selected' : ''}>Stop</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Trade Setup Section -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-6">
+                    <label class="form-label">
+                        <i class="fas fa-chess me-2 text-primary"></i>Strategy
+                    </label>
+                    <input type="text" class="form-control form-control-sm" name="strategy" value="${trade.strategy || ''}" placeholder="e.g., FTR Breakout, Support/Resistance">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">
+                        <i class="fas fa-shield-alt me-2 text-danger"></i>Stop Loss
+                    </label>
+                    <input type="number" step="0.00001" class="form-control form-control-sm" name="stop_loss" value="${trade.stop_loss || ''}" placeholder="0.00000">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">
+                        <i class="fas fa-bullseye me-2 text-success"></i>Take Profit
+                    </label>
+                    <input type="number" step="0.00001" class="form-control form-control-sm" name="take_profit" value="${trade.take_profit || ''}" placeholder="0.00000">
+                </div>
+            </div>
+
+            <!-- Price Section -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-3">
+                    <label class="form-label">
                         <i class="fas fa-dollar-sign me-2 text-success"></i>Entry Price
                     </label>
                     <input type="number" step="0.00001" class="form-control form-control-sm" name="entry_price" value="${trade.entry_price || ''}" placeholder="0.00000">
@@ -557,7 +612,60 @@
                     </label>
                     <input type="number" step="0.01" class="form-control form-control-sm" name="rr" value="${trade.rr || ''}" placeholder="1.0">
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-3">
+                    <label class="form-label">
+                        <i class="fas fa-dollar-sign me-2 text-success"></i>Absolute P/L
+                    </label>
+                    <input type="number" step="0.01" class="form-control form-control-sm" name="absolute_pl" value="${trade.absolute_pl || ''}" placeholder="0.00">
+                </div>
+            </div>
+
+            <!-- Trade Review Section -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-3">
+                    <label class="form-label">
+                        <i class="fas fa-user-check me-2 text-warning"></i>Disciplined
+                    </label>
+                    <div class="d-flex gap-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="disciplined" value="Y" id="editDisciplinedY" ${trade.disciplined === 'Y' ? 'checked' : ''}>
+                            <label class="form-check-label" for="editDisciplinedY">Yes</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="disciplined" value="N" id="editDisciplinedN" ${trade.disciplined === 'N' ? 'checked' : ''}>
+                            <label class="form-check-label" for="editDisciplinedN">No</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">
+                        <i class="fas fa-clipboard-check me-2 text-info"></i>Followed Rules
+                    </label>
+                    <div class="d-flex gap-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="followed_rules" value="Y" id="editFollowedY" ${trade.followed_rules === 'Y' ? 'checked' : ''}>
+                            <label class="form-check-label" for="editFollowedY">Yes</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="followed_rules" value="N" id="editFollowedN" ${trade.followed_rules === 'N' ? 'checked' : ''}>
+                            <label class="form-check-label" for="editFollowedN">No</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">
+                        <i class="fas fa-star me-2 text-warning"></i>Rating
+                    </label>
+                    <select class="form-select form-select-sm" name="rating">
+                        <option value="">Select rating</option>
+                        <option value="1" ${trade.rating == 1 ? 'selected' : ''}>★☆☆☆☆ (1/5)</option>
+                        <option value="2" ${trade.rating == 2 ? 'selected' : ''}>★★☆☆☆ (2/5)</option>
+                        <option value="3" ${trade.rating == 3 ? 'selected' : ''}>★★★☆☆ (3/5)</option>
+                        <option value="4" ${trade.rating == 4 ? 'selected' : ''}>★★★★☆ (4/5)</option>
+                        <option value="5" ${trade.rating == 5 ? 'selected' : ''}>★★★★★ (5/5)</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
                     <label class="form-label">
                         <i class="fas fa-search me-2 text-info"></i>Timeframes
                     </label>
@@ -670,7 +778,7 @@
                     
                     // Show loading in table during refresh
                     const tbody = $('#tradesTable tbody');
-                    tbody.html('<tr><td colspan="14" class="text-center py-4"><i class="fas fa-spinner fa-spin me-2"></i>Refreshing trades...</td></tr>');
+                    tbody.html('<tr><td colspan="22" class="text-center py-4"><i class="fas fa-spinner fa-spin me-2"></i>Refreshing trades...</td></tr>');
                     
                     loadTrades();
                     updateStatistics();
@@ -706,7 +814,7 @@
                     
                     // Show loading in table during refresh
                     const tbody = $('#tradesTable tbody');
-                    tbody.html('<tr><td colspan="14" class="text-center py-4"><i class="fas fa-spinner fa-spin me-2"></i>Refreshing trades...</td></tr>');
+                    tbody.html('<tr><td colspan="22" class="text-center py-4"><i class="fas fa-spinner fa-spin me-2"></i>Refreshing trades...</td></tr>');
                     
                     loadTrades();
                     updateStatistics();
