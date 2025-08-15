@@ -40,6 +40,14 @@ if ( isset( $_POST['submit_trade'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'ad
         'chart_htf'   => esc_url_raw( $_POST['chart_htf'] ),
         'chart_ltf'   => esc_url_raw( $_POST['chart_ltf'] ),
         'comments'    => sanitize_textarea_field( wp_unslash( $_POST['comments'] ) ),
+        'order_type'  => sanitize_text_field( $_POST['order_type'] ?? '' ),
+        'strategy'    => sanitize_text_field( $_POST['strategy'] ?? '' ),
+        'stop_loss'   => floatval( $_POST['stop_loss'] ?? 0 ),
+        'take_profit' => floatval( $_POST['take_profit'] ?? 0 ),
+        'absolute_pl' => floatval( $_POST['absolute_pl'] ?? 0 ),
+        'disciplined' => sanitize_text_field( $_POST['disciplined'] ?? '' ),
+        'followed_rules' => sanitize_text_field( $_POST['followed_rules'] ?? '' ),
+        'rating'      => intval( $_POST['rating'] ?? 0 ),
     );
 
     if ( $is_edit ) {
@@ -119,7 +127,7 @@ if ( isset( $_POST['submit_trade'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'ad
                                     <label for="date"><?php esc_html_e( 'Date', 'trade-journal-wp' ); ?> <span style="color: red;">*</span></label>
                                 </th>
                                 <td>
-                                    <input type="date" name="date" id="date" value="<?php echo esc_attr( $edit_trade['date'] ?? date( 'Y-m-d' ) ); ?>" required />
+                                    <input type="date" name="date" id="date" value="<?php echo esc_attr( $edit_trade['date'] ?? current_time( 'Y-m-d' ) ); ?>" required />
                                 </td>
                             </tr>
                             <tr>
@@ -127,7 +135,7 @@ if ( isset( $_POST['submit_trade'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'ad
                                     <label for="time"><?php esc_html_e( 'Time', 'trade-journal-wp' ); ?></label>
                                 </th>
                                 <td>
-                                    <input type="time" name="time" id="time" value="<?php echo esc_attr( $edit_trade['time'] ?? '' ); ?>" />
+                                    <input type="time" name="time" id="time" value="<?php echo esc_attr( $edit_trade['time'] ?? current_time('H:i') ); ?>" />
                                 </td>
                             </tr>
                             <tr>
@@ -145,15 +153,58 @@ if ( isset( $_POST['submit_trade'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'ad
                                     </select>
                                 </td>
                             </tr>
+                            <tr>
+                                <th scope="row">
+                                    <label for="order_type"><?php esc_html_e( 'Order Type', 'trade-journal-wp' ); ?></label>
+                                </th>
+                                <td>
+                                    <select name="order_type" id="order_type">
+                                        <option value=""><?php esc_html_e( 'Select order type', 'trade-journal-wp' ); ?></option>
+                                        <option value="Market" <?php selected( $edit_trade['order_type'] ?? '', 'Market' ); ?>><?php esc_html_e( 'Market', 'trade-journal-wp' ); ?></option>
+                                        <option value="Limit" <?php selected( $edit_trade['order_type'] ?? '', 'Limit' ); ?>><?php esc_html_e( 'Limit', 'trade-journal-wp' ); ?></option>
+                                        <option value="Stop" <?php selected( $edit_trade['order_type'] ?? '', 'Stop' ); ?>><?php esc_html_e( 'Stop', 'trade-journal-wp' ); ?></option>
+                                    </select>
+                                </td>
+                            </tr>
                         </table>
                     </div>
                 </div>
 
-                <!-- Trade Performance -->
+                <!-- Trade Setup -->
                 <div class="postbox">
-                    <h2 class="hndle"><span><?php esc_html_e( 'Trade Performance', 'trade-journal-wp' ); ?></span></h2>
+                    <h2 class="hndle"><span><?php esc_html_e( 'Trade Setup', 'trade-journal-wp' ); ?></span></h2>
                     <div class="inside">
                         <table class="form-table">
+                            <tr>
+                                <th scope="row">
+                                    <label for="strategy"><?php esc_html_e( 'Strategy Name', 'trade-journal-wp' ); ?></label>
+                                </th>
+                                <td>
+                                    <input type="text" name="strategy" id="strategy" class="regular-text" 
+                                           value="<?php echo esc_attr( $edit_trade['strategy'] ?? '' ); ?>" 
+                                           placeholder="<?php esc_attr_e( 'e.g., FTR Breakout, Support/Resistance', 'trade-journal-wp' ); ?>" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">
+                                    <label for="stop_loss"><?php esc_html_e( 'Stop Loss', 'trade-journal-wp' ); ?></label>
+                                </th>
+                                <td>
+                                    <input type="number" step="0.00001" name="stop_loss" id="stop_loss" 
+                                           value="<?php echo esc_attr( $edit_trade['stop_loss'] ?? '' ); ?>" 
+                                           placeholder="0.00000" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">
+                                    <label for="take_profit"><?php esc_html_e( 'Take Profit', 'trade-journal-wp' ); ?></label>
+                                </th>
+                                <td>
+                                    <input type="number" step="0.00001" name="take_profit" id="take_profit" 
+                                           value="<?php echo esc_attr( $edit_trade['take_profit'] ?? '' ); ?>" 
+                                           placeholder="0.00000" />
+                                </td>
+                            </tr>
                             <tr>
                                 <th scope="row">
                                     <label for="entry_price"><?php esc_html_e( 'Entry Price', 'trade-journal-wp' ); ?></label>
@@ -174,6 +225,15 @@ if ( isset( $_POST['submit_trade'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'ad
                                            placeholder="0.00000" />
                                 </td>
                             </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Trade Performance -->
+                <div class="postbox">
+                    <h2 class="hndle"><span><?php esc_html_e( 'Trade Performance', 'trade-journal-wp' ); ?></span></h2>
+                    <div class="inside">
+                        <table class="form-table">
                             <tr>
                                 <th scope="row">
                                     <label for="outcome"><?php esc_html_e( 'Outcome', 'trade-journal-wp' ); ?></label>
@@ -207,6 +267,17 @@ if ( isset( $_POST['submit_trade'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'ad
                                     <input type="number" step="0.01" name="rr" id="rr" 
                                            value="<?php echo esc_attr( $edit_trade['rr'] ?? '' ); ?>" 
                                            placeholder="1.0" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">
+                                    <label for="absolute_pl"><?php esc_html_e( 'Absolute P/L', 'trade-journal-wp' ); ?></label>
+                                </th>
+                                <td>
+                                    <input type="number" step="0.01" name="absolute_pl" id="absolute_pl" 
+                                           value="<?php echo esc_attr( $edit_trade['absolute_pl'] ?? '' ); ?>" 
+                                           placeholder="0.00" />
+                                    <p class="description"><?php esc_html_e( 'Absolute profit/loss amount in account currency', 'trade-journal-wp' ); ?></p>
                                 </td>
                             </tr>
                         </table>
@@ -255,6 +326,65 @@ if ( isset( $_POST['submit_trade'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'ad
                                     <input type="url" name="chart_ltf" id="chart_ltf" class="regular-text" 
                                            value="<?php echo esc_attr( $edit_trade['chart_ltf'] ?? '' ); ?>" 
                                            placeholder="https://www.tradingview.com/..." />
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Trade Review -->
+                <div class="postbox">
+                    <h2 class="hndle"><span><?php esc_html_e( 'Trade Review', 'trade-journal-wp' ); ?></span></h2>
+                    <div class="inside">
+                        <table class="form-table">
+                            <tr>
+                                <th scope="row">
+                                    <label><?php esc_html_e( 'Disciplined', 'trade-journal-wp' ); ?></label>
+                                </th>
+                                <td>
+                                    <fieldset>
+                                        <label>
+                                            <input type="radio" name="disciplined" value="Y" <?php checked( $edit_trade['disciplined'] ?? '', 'Y' ); ?> />
+                                            <?php esc_html_e( 'Yes', 'trade-journal-wp' ); ?>
+                                        </label><br>
+                                        <label>
+                                            <input type="radio" name="disciplined" value="N" <?php checked( $edit_trade['disciplined'] ?? '', 'N' ); ?> />
+                                            <?php esc_html_e( 'No', 'trade-journal-wp' ); ?>
+                                        </label>
+                                    </fieldset>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">
+                                    <label><?php esc_html_e( 'Followed Rules', 'trade-journal-wp' ); ?></label>
+                                </th>
+                                <td>
+                                    <fieldset>
+                                        <label>
+                                            <input type="radio" name="followed_rules" value="Y" <?php checked( $edit_trade['followed_rules'] ?? '', 'Y' ); ?> />
+                                            <?php esc_html_e( 'Yes', 'trade-journal-wp' ); ?>
+                                        </label><br>
+                                        <label>
+                                            <input type="radio" name="followed_rules" value="N" <?php checked( $edit_trade['followed_rules'] ?? '', 'N' ); ?> />
+                                            <?php esc_html_e( 'No', 'trade-journal-wp' ); ?>
+                                        </label>
+                                    </fieldset>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">
+                                    <label for="rating"><?php esc_html_e( 'Rating', 'trade-journal-wp' ); ?></label>
+                                </th>
+                                <td>
+                                    <select name="rating" id="rating">
+                                        <option value=""><?php esc_html_e( 'Select rating', 'trade-journal-wp' ); ?></option>
+                                        <?php for ( $i = 1; $i <= 5; $i++ ) : ?>
+                                            <option value="<?php echo $i; ?>" <?php selected( $edit_trade['rating'] ?? '', $i ); ?>>
+                                                <?php echo str_repeat( '★', $i ) . str_repeat( '☆', 5 - $i ); ?> (<?php echo $i; ?>/5)
+                                            </option>
+                                        <?php endfor; ?>
+                                    </select>
+                                    <p class="description"><?php esc_html_e( 'Rate the quality of this trade execution', 'trade-journal-wp' ); ?></p>
                                 </td>
                             </tr>
                         </table>

@@ -849,7 +849,18 @@
                 if (input.is(':checkbox')) {
                     input.prop('checked', true);
                 } else {
-                    input.val(value);
+                    // Only override if we have a meaningful value and it's not date/time fields with current defaults
+                    if (value && value.trim() !== '') {
+                        // For date/time fields, only override if the saved value is different from current defaults
+                        if (key === 'date' || key === 'time') {
+                            const currentValue = input.val();
+                            if (currentValue !== value) {
+                                input.val(value);
+                            }
+                        } else {
+                            input.val(value);
+                        }
+                    }
                 }
             });
         }

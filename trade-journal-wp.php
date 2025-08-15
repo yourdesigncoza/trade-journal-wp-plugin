@@ -586,12 +586,21 @@ class Trade_Journal_WP {
         $sanitized['date'] = sanitize_text_field( $data['date'] ?? '' );
         $sanitized['time'] = sanitize_text_field( $data['time'] ?? '' );
         $sanitized['direction'] = sanitize_text_field( $data['direction'] ?? '' );
+        $sanitized['order_type'] = sanitize_text_field( $data['order_type'] ?? '' );
+        $sanitized['strategy'] = sanitize_text_field( $data['strategy'] ?? '' );
+        
         // Handle price fields - don't convert empty strings to 0
         $entry_price_value = $data['entry_price'] ?? $data['entryPrice'] ?? '';
         $sanitized['entry_price'] = ( $entry_price_value !== '' ) ? floatval( $entry_price_value ) : null;
         
         $exit_price_value = $data['exit_price'] ?? $data['exitPrice'] ?? '';
         $sanitized['exit_price'] = ( $exit_price_value !== '' ) ? floatval( $exit_price_value ) : null;
+        
+        $stop_loss_value = $data['stop_loss'] ?? '';
+        $sanitized['stop_loss'] = ( $stop_loss_value !== '' ) ? floatval( $stop_loss_value ) : null;
+        
+        $take_profit_value = $data['take_profit'] ?? '';
+        $sanitized['take_profit'] = ( $take_profit_value !== '' ) ? floatval( $take_profit_value ) : null;
         
         $sanitized['outcome'] = sanitize_text_field( $data['outcome'] ?? '' );
         
@@ -600,6 +609,16 @@ class Trade_Journal_WP {
         
         $rr_value = $data['rr'] ?? '';
         $sanitized['rr'] = ( $rr_value !== '' ) ? floatval( $rr_value ) : null;
+        
+        $absolute_pl_value = $data['absolute_pl'] ?? '';
+        $sanitized['absolute_pl'] = ( $absolute_pl_value !== '' ) ? floatval( $absolute_pl_value ) : null;
+        
+        $sanitized['disciplined'] = sanitize_text_field( $data['disciplined'] ?? '' );
+        $sanitized['followed_rules'] = sanitize_text_field( $data['followed_rules'] ?? '' );
+        
+        $rating_value = $data['rating'] ?? '';
+        $sanitized['rating'] = ( $rating_value !== '' ) ? intval( $rating_value ) : null;
+        
         $sanitized['tf'] = is_array( $data['tf'] ?? null ) ? array_filter( $data['tf'] ) : array();
         $sanitized['chart_htf'] = esc_url_raw( $data['chart_htf'] ?? $data['chartHtf'] ?? '' );
         $sanitized['chart_ltf'] = esc_url_raw( $data['chart_ltf'] ?? $data['chartLtf'] ?? '' );

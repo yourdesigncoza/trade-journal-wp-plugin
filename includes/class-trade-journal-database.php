@@ -125,11 +125,19 @@ class Trade_Journal_Database {
             date date NOT NULL,
             time time DEFAULT NULL,
             direction enum('LONG','SHORT') NOT NULL,
+            order_type enum('Market','Limit','Stop') DEFAULT NULL,
+            strategy varchar(255) DEFAULT NULL,
+            stop_loss decimal(10,5) DEFAULT NULL,
+            take_profit decimal(10,5) DEFAULT NULL,
             entry_price decimal(10,5) DEFAULT NULL,
             exit_price decimal(10,5) DEFAULT NULL,
             outcome enum('W','L','BE','C') DEFAULT NULL,
             pl_percent decimal(10,2) DEFAULT NULL,
             rr decimal(10,2) DEFAULT NULL,
+            absolute_pl decimal(10,2) DEFAULT NULL,
+            disciplined enum('Y','N') DEFAULT NULL,
+            followed_rules enum('Y','N') DEFAULT NULL,
+            rating tinyint(1) DEFAULT NULL,
             tf json DEFAULT NULL,
             chart_htf text DEFAULT NULL,
             chart_ltf text DEFAULT NULL,
@@ -141,6 +149,11 @@ class Trade_Journal_Database {
             KEY idx_date (date),
             KEY idx_market (market),
             KEY idx_outcome (outcome),
+            KEY idx_order_type (order_type),
+            KEY idx_strategy (strategy),
+            KEY idx_disciplined (disciplined),
+            KEY idx_followed_rules (followed_rules),
+            KEY idx_rating (rating),
             KEY idx_created_at (created_at),
             KEY idx_user_date (user_id, date)
         )";
@@ -250,9 +263,11 @@ class Trade_Journal_Database {
         $sql = "
             INSERT INTO trading_journal_entries (
                 id, user_id, market, session, date, time, direction,
+                order_type, strategy, stop_loss, take_profit,
                 entry_price, exit_price, outcome, pl_percent, rr,
+                absolute_pl, disciplined, followed_rules, rating,
                 tf, chart_htf, chart_ltf, comments
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ";
 
         $stmt = $this->connection->prepare( $sql );
@@ -274,24 +289,55 @@ class Trade_Journal_Database {
         // Get user_id from data or current user
         $user_id = isset( $data['user_id'] ) ? $data['user_id'] : get_current_user_id();
 
+        // Prepare all variables for bind_param (required for pass-by-reference)
+        $market = $data['market'];
+        $session = $data['session'];
+        $date = $data['date'];
+        $time = $data['time'];
+        $direction = $data['direction'];
+        $order_type = $data['order_type'] ?? null;
+        $strategy = $data['strategy'] ?? null;
+        $stop_loss = $data['stop_loss'] ?? null;
+        $take_profit = $data['take_profit'] ?? null;
+        $entry_price = $data['entry_price'] ?? null;
+        $exit_price = $data['exit_price'] ?? null;
+        $outcome = $data['outcome'] ?? null;
+        $pl_percent = $data['pl_percent'] ?? null;
+        $rr = $data['rr'] ?? null;
+        $absolute_pl = $data['absolute_pl'] ?? null;
+        $disciplined = $data['disciplined'] ?? null;
+        $followed_rules = $data['followed_rules'] ?? null;
+        $rating = $data['rating'] ?? null;
+        $chart_htf = $data['chart_htf'] ?? '';
+        $chart_ltf = $data['chart_ltf'] ?? '';
+        $comments = $data['comments'] ?? '';
+
         $stmt->bind_param(
-            "sisssssddsddssss",
+            "sissssssddddsdddsssissss",
             $id,
             $user_id,
-            $data['market'],
-            $data['session'],
-            $data['date'],
-            $data['time'],
-            $data['direction'],
-            $data['entry_price'],
-            $data['exit_price'],
-            $data['outcome'],
-            $data['pl_percent'],
-            $data['rr'],
+            $market,
+            $session,
+            $date,
+            $time,
+            $direction,
+            $order_type,
+            $strategy,
+            $stop_loss,
+            $take_profit,
+            $entry_price,
+            $exit_price,
+            $outcome,
+            $pl_percent,
+            $rr,
+            $absolute_pl,
+            $disciplined,
+            $followed_rules,
+            $rating,
             $tf,
-            $data['chart_htf'],
-            $data['chart_ltf'],
-            $data['comments']
+            $chart_htf,
+            $chart_ltf,
+            $comments
         );
 
         if ( $stmt->execute() ) {
@@ -318,20 +364,28 @@ class Trade_Journal_Database {
         $types = "";
 
         $allowed_fields = array(
-            'market'      => 's',
-            'session'     => 's',
-            'date'        => 's',
-            'time'        => 's',
-            'direction'   => 's',
-            'entry_price' => 'd',
-            'exit_price'  => 'd',
-            'outcome'     => 's',
-            'pl_percent'  => 'd',
-            'rr'          => 'd',
-            'tf'          => 's',
-            'chart_htf'   => 's',
-            'chart_ltf'   => 's',
-            'comments'    => 's',
+            'market'        => 's',
+            'session'       => 's',
+            'date'          => 's',
+            'time'          => 's',
+            'direction'     => 's',
+            'order_type'    => 's',
+            'strategy'      => 's',
+            'stop_loss'     => 'd',
+            'take_profit'   => 'd',
+            'entry_price'   => 'd',
+            'exit_price'    => 'd',
+            'outcome'       => 's',
+            'pl_percent'    => 'd',
+            'rr'            => 'd',
+            'absolute_pl'   => 'd',
+            'disciplined'   => 's',
+            'followed_rules'=> 's',
+            'rating'        => 'i',
+            'tf'            => 's',
+            'chart_htf'     => 's',
+            'chart_ltf'     => 's',
+            'comments'      => 's',
         );
 
         foreach ( $updates as $field => $value ) {
@@ -343,7 +397,9 @@ class Trade_Journal_Database {
                     } elseif ( empty( $value ) ) {
                         $value = null;
                     }
-                } elseif ( in_array( $field, array( 'entry_price', 'exit_price', 'pl_percent', 'rr' ), true ) && '' === $value ) {
+                } elseif ( in_array( $field, array( 'entry_price', 'exit_price', 'stop_loss', 'take_profit', 'pl_percent', 'rr', 'absolute_pl' ), true ) && '' === $value ) {
+                    $value = null;
+                } elseif ( 'rating' === $field && '' === $value ) {
                     $value = null;
                 }
 
@@ -483,24 +539,32 @@ class Trade_Journal_Database {
      */
     private function format_trade( $row ) {
         return array(
-            'id'          => $row['id'] ?? '',
-            'user_id'     => isset( $row['user_id'] ) ? (int) $row['user_id'] : 0,
-            'market'      => $row['market'] ?? '',
-            'session'     => $row['session'] ?? '',
-            'date'        => $row['date'] ?? '',
-            'time'        => $row['time'] ?? '',
-            'direction'   => $row['direction'] ?? '',
-            'entry_price' => isset( $row['entry_price'] ) && $row['entry_price'] ? (float) $row['entry_price'] : null,
-            'exit_price'  => isset( $row['exit_price'] ) && $row['exit_price'] ? (float) $row['exit_price'] : null,
-            'outcome'     => $row['outcome'] ?? '',
-            'pl_percent'  => isset( $row['pl_percent'] ) && $row['pl_percent'] ? (float) $row['pl_percent'] : null,
-            'rr'          => isset( $row['rr'] ) && $row['rr'] ? (float) $row['rr'] : null,
-            'tf'          => isset( $row['tf'] ) && $row['tf'] ? json_decode( $row['tf'], true ) : null,
-            'chart_htf'   => $row['chart_htf'] ?? '',
-            'chart_ltf'   => $row['chart_ltf'] ?? '',
-            'comments'    => $row['comments'] ?? '',
-            'created_at'  => $row['created_at'] ?? '',
-            'updated_at'  => $row['updated_at'] ?? '',
+            'id'            => $row['id'] ?? '',
+            'user_id'       => isset( $row['user_id'] ) ? (int) $row['user_id'] : 0,
+            'market'        => $row['market'] ?? '',
+            'session'       => $row['session'] ?? '',
+            'date'          => $row['date'] ?? '',
+            'time'          => $row['time'] ?? '',
+            'direction'     => $row['direction'] ?? '',
+            'order_type'    => $row['order_type'] ?? '',
+            'strategy'      => $row['strategy'] ?? '',
+            'stop_loss'     => isset( $row['stop_loss'] ) && $row['stop_loss'] ? (float) $row['stop_loss'] : null,
+            'take_profit'   => isset( $row['take_profit'] ) && $row['take_profit'] ? (float) $row['take_profit'] : null,
+            'entry_price'   => isset( $row['entry_price'] ) && $row['entry_price'] ? (float) $row['entry_price'] : null,
+            'exit_price'    => isset( $row['exit_price'] ) && $row['exit_price'] ? (float) $row['exit_price'] : null,
+            'outcome'       => $row['outcome'] ?? '',
+            'pl_percent'    => isset( $row['pl_percent'] ) && $row['pl_percent'] ? (float) $row['pl_percent'] : null,
+            'rr'            => isset( $row['rr'] ) && $row['rr'] ? (float) $row['rr'] : null,
+            'absolute_pl'   => isset( $row['absolute_pl'] ) && $row['absolute_pl'] ? (float) $row['absolute_pl'] : null,
+            'disciplined'   => $row['disciplined'] ?? '',
+            'followed_rules'=> $row['followed_rules'] ?? '',
+            'rating'        => isset( $row['rating'] ) && $row['rating'] ? (int) $row['rating'] : null,
+            'tf'            => isset( $row['tf'] ) && $row['tf'] ? json_decode( $row['tf'], true ) : null,
+            'chart_htf'     => $row['chart_htf'] ?? '',
+            'chart_ltf'     => $row['chart_ltf'] ?? '',
+            'comments'      => $row['comments'] ?? '',
+            'created_at'    => $row['created_at'] ?? '',
+            'updated_at'    => $row['updated_at'] ?? '',
         );
     }
 
