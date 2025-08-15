@@ -11,7 +11,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 $database = Trade_Journal_Database::get_instance();
-$trades = $database->get_all_trades();
+
+// Admins can see all trades by default, but can filter by user
+$user_id = 'all';
+if ( isset( $_GET['user_id'] ) && is_numeric( $_GET['user_id'] ) ) {
+    $user_id = intval( $_GET['user_id'] );
+}
+
+$trades = $database->get_all_trades( $user_id );
 $stats = $database->get_statistics();
 ?>
 
@@ -125,12 +132,32 @@ $stats = $database->get_statistics();
                 </h2>
                 <div class="inside">
                     
+                    <!-- User Filter -->
+                    <form method="get" style="margin-bottom: 20px;">
+                        <input type="hidden" name="page" value="trade-journal-wp" />
+                        <label for="user_id"><?php esc_html_e( 'Filter by User:', 'trade-journal-wp' ); ?></label>
+                        <select name="user_id" id="user_id">
+                            <option value=""><?php esc_html_e( 'All Users', 'trade-journal-wp' ); ?></option>
+                            <?php
+                            $users = get_users( array( 'capability' => 'read' ) );
+                            foreach ( $users as $user ) :
+                                $selected = ( isset( $_GET['user_id'] ) && $_GET['user_id'] == $user->ID ) ? 'selected' : '';
+                            ?>
+                                <option value="<?php echo esc_attr( $user->ID ); ?>" <?php echo $selected; ?>>
+                                    <?php echo esc_html( $user->display_name . ' (' . $user->user_login . ')' ); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                        <input type="submit" value="<?php esc_attr_e( 'Filter', 'trade-journal-wp' ); ?>" class="button" />
+                    </form>
+                    
                     <?php if ( ! empty( $trades ) ) : ?>
                     
                     <table class="wp-list-table widefat fixed striped">
                         <thead>
                             <tr>
                                 <th><?php esc_html_e( 'Date', 'trade-journal-wp' ); ?></th>
+                                <th><?php esc_html_e( 'User', 'trade-journal-wp' ); ?></th>
                                 <th><?php esc_html_e( 'Market', 'trade-journal-wp' ); ?></th>
                                 <th><?php esc_html_e( 'Session', 'trade-journal-wp' ); ?></th>
                                 <th><?php esc_html_e( 'Direction', 'trade-journal-wp' ); ?></th>
@@ -150,6 +177,16 @@ $stats = $database->get_statistics();
                             ?>
                             <tr>
                                 <td><?php echo esc_html( date( 'M j, Y', strtotime( $trade['date'] ) ) ); ?></td>
+                                <td>
+                                    <?php 
+                                    $user = get_user_by( 'id', $trade['user_id'] );
+                                    if ( $user ) {
+                                        echo esc_html( $user->display_name );
+                                    } else {
+                                        echo '<em>Unknown User</em>';
+                                    }
+                                    ?>
+                                </td>
                                 <td>
                                     <span class="badge" style="background: #0073aa; color: white; padding: 2px 8px; border-radius: 3px; font-size: 11px;">
                                         <?php echo esc_html( $trade['market'] ); ?>

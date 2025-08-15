@@ -399,7 +399,9 @@ class Trade_Journal_WP {
                 wp_send_json_error( 'Database connection failed. Please check your database settings.' );
             }
             
-            $trades = $database->get_all_trades();
+            // Get current user's trades (admins can see all by passing 'all')
+            $user_id = current_user_can( 'manage_options' ) && isset( $_POST['user_id'] ) && $_POST['user_id'] === 'all' ? 'all' : get_current_user_id();
+            $trades = $database->get_all_trades( $user_id );
             wp_send_json_success( $trades );
             
         } catch ( Exception $e ) {
@@ -462,12 +464,12 @@ class Trade_Journal_WP {
                 wp_send_json_error( 'Database connection failed. Please check your database settings.' );
             }
             
-            $result = $database->update_trade( $id, $data );
+            $result = $database->update_trade( $id, $data, get_current_user_id() );
             
             if ( $result ) {
                 wp_send_json_success( $result );
             } else {
-                wp_send_json_error( 'Failed to update trade' );
+                wp_send_json_error( 'Failed to update trade - you can only edit your own trades' );
             }
             
         } catch ( Exception $e ) {
@@ -493,12 +495,12 @@ class Trade_Journal_WP {
                 wp_send_json_error( 'Database connection failed. Please check your database settings.' );
             }
             
-            $result = $database->delete_trade( $id );
+            $result = $database->delete_trade( $id, get_current_user_id() );
             
             if ( $result ) {
                 wp_send_json_success();
             } else {
-                wp_send_json_error( 'Failed to delete trade' );
+                wp_send_json_error( 'Failed to delete trade - you can only delete your own trades' );
             }
             
         } catch ( Exception $e ) {
@@ -602,6 +604,7 @@ class Trade_Journal_WP {
         $sanitized['chart_htf'] = esc_url_raw( $data['chart_htf'] ?? $data['chartHtf'] ?? '' );
         $sanitized['chart_ltf'] = esc_url_raw( $data['chart_ltf'] ?? $data['chartLtf'] ?? '' );
         $sanitized['comments'] = sanitize_textarea_field( wp_unslash( $data['comments'] ?? '' ) );
+        $sanitized['user_id'] = isset( $data['user_id'] ) ? intval( $data['user_id'] ) : get_current_user_id();
         
         return $sanitized;
     }

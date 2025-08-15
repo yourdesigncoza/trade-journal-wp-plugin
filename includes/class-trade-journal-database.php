@@ -119,6 +119,7 @@ class Trade_Journal_Database {
 
         $sql = "CREATE TABLE IF NOT EXISTS trading_journal_entries (
             id varchar(255) NOT NULL,
+            user_id int NOT NULL DEFAULT 0,
             market enum('XAUUSD','EU','GU','UJ','US30','NAS100') NOT NULL,
             session enum('LO','NY','AS') NOT NULL,
             date date NOT NULL,
@@ -136,10 +137,12 @@ class Trade_Journal_Database {
             created_at timestamp DEFAULT CURRENT_TIMESTAMP,
             updated_at timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             PRIMARY KEY (id),
+            KEY idx_user_id (user_id),
             KEY idx_date (date),
             KEY idx_market (market),
             KEY idx_outcome (outcome),
-            KEY idx_created_at (created_at)
+            KEY idx_created_at (created_at),
+            KEY idx_user_date (user_id, date)
         )";
 
         if ( ! $this->connection->query( $sql ) ) {
@@ -151,15 +154,33 @@ class Trade_Journal_Database {
     }
 
     /**
-     * Get all trades
+     * Get all trades for a specific user (or all trades for admins)
      */
-    public function get_all_trades() {
+    public function get_all_trades( $user_id = null ) {
         if ( ! $this->connection ) {
             return array();
         }
 
-        $sql = "SELECT * FROM trading_journal_entries ORDER BY created_at DESC";
-        $result = $this->connection->query( $sql );
+        // If no user_id provided, get current user ID
+        if ( $user_id === null ) {
+            $user_id = get_current_user_id();
+        }
+        
+        // Admins can see all trades by passing user_id = 0
+        if ( $user_id === 0 || ( current_user_can( 'manage_options' ) && $user_id === 'all' ) ) {
+            $sql = "SELECT * FROM trading_journal_entries ORDER BY created_at DESC";
+            $result = $this->connection->query( $sql );
+        } else {
+            $sql = "SELECT * FROM trading_journal_entries WHERE user_id = ? ORDER BY created_at DESC";
+            $stmt = $this->connection->prepare( $sql );
+            if ( ! $stmt ) {
+                error_log( 'Trade Journal WP: Prepare failed: ' . $this->connection->error );
+                return array();
+            }
+            $stmt->bind_param( "i", $user_id );
+            $stmt->execute();
+            $result = $stmt->get_result();
+        }
 
         if ( ! $result ) {
             error_log( 'Trade Journal WP: Error fetching trades: ' . $this->connection->error );
@@ -175,22 +196,38 @@ class Trade_Journal_Database {
     }
 
     /**
-     * Get single trade
+     * Get single trade with user ownership validation
      */
-    public function get_trade( $id ) {
+    public function get_trade( $id, $user_id = null ) {
         if ( ! $this->connection ) {
             return null;
         }
 
-        $stmt = $this->connection->prepare( "SELECT * FROM trading_journal_entries WHERE id = ?" );
-        if ( ! $stmt ) {
-            error_log( 'Trade Journal WP: Prepare failed: ' . $this->connection->error );
-            return null;
+        // If no user_id provided, get current user ID
+        if ( $user_id === null ) {
+            $user_id = get_current_user_id();
         }
 
-        $stmt->bind_param( "s", $id );
-        $stmt->execute();
+        // Admins can access any trade
+        if ( current_user_can( 'manage_options' ) ) {
+            $sql = "SELECT * FROM trading_journal_entries WHERE id = ?";
+            $stmt = $this->connection->prepare( $sql );
+            if ( ! $stmt ) {
+                error_log( 'Trade Journal WP: Prepare failed: ' . $this->connection->error );
+                return null;
+            }
+            $stmt->bind_param( "s", $id );
+        } else {
+            $sql = "SELECT * FROM trading_journal_entries WHERE id = ? AND user_id = ?";
+            $stmt = $this->connection->prepare( $sql );
+            if ( ! $stmt ) {
+                error_log( 'Trade Journal WP: Prepare failed: ' . $this->connection->error );
+                return null;
+            }
+            $stmt->bind_param( "si", $id, $user_id );
+        }
 
+        $stmt->execute();
         $result = $stmt->get_result();
         if ( $row = $result->fetch_assoc() ) {
             return $this->format_trade( $row );
@@ -212,10 +249,10 @@ class Trade_Journal_Database {
 
         $sql = "
             INSERT INTO trading_journal_entries (
-                id, market, session, date, time, direction,
+                id, user_id, market, session, date, time, direction,
                 entry_price, exit_price, outcome, pl_percent, rr,
                 tf, chart_htf, chart_ltf, comments
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ";
 
         $stmt = $this->connection->prepare( $sql );
@@ -234,9 +271,13 @@ class Trade_Journal_Database {
             }
         }
 
+        // Get user_id from data or current user
+        $user_id = isset( $data['user_id'] ) ? $data['user_id'] : get_current_user_id();
+
         $stmt->bind_param(
-            "ssssssddsddssss",
+            "sisssssddsddssss",
             $id,
+            $user_id,
             $data['market'],
             $data['session'],
             $data['date'],
@@ -265,9 +306,9 @@ class Trade_Journal_Database {
     }
 
     /**
-     * Update existing trade
+     * Update existing trade with user ownership validation
      */
-    public function update_trade( $id, $updates ) {
+    public function update_trade( $id, $updates, $user_id = null ) {
         if ( ! $this->connection ) {
             return false;
         }
@@ -316,9 +357,22 @@ class Trade_Journal_Database {
             return false;
         }
 
-        $sql = "UPDATE trading_journal_entries SET " . implode( ', ', $set_clause ) . " WHERE id = ?";
-        $values[] = $id;
-        $types .= "s";
+        // If no user_id provided, get current user ID
+        if ( $user_id === null ) {
+            $user_id = get_current_user_id();
+        }
+
+        // Admins can update any trade, regular users only their own
+        if ( current_user_can( 'manage_options' ) ) {
+            $sql = "UPDATE trading_journal_entries SET " . implode( ', ', $set_clause ) . " WHERE id = ?";
+            $values[] = $id;
+            $types .= "s";
+        } else {
+            $sql = "UPDATE trading_journal_entries SET " . implode( ', ', $set_clause ) . " WHERE id = ? AND user_id = ?";
+            $values[] = $id;
+            $values[] = $user_id;
+            $types .= "si";
+        }
 
         $stmt = $this->connection->prepare( $sql );
         if ( ! $stmt ) {
@@ -336,20 +390,36 @@ class Trade_Journal_Database {
     }
 
     /**
-     * Delete trade
+     * Delete trade with user ownership validation
      */
-    public function delete_trade( $id ) {
+    public function delete_trade( $id, $user_id = null ) {
         if ( ! $this->connection ) {
             return false;
         }
 
-        $stmt = $this->connection->prepare( "DELETE FROM trading_journal_entries WHERE id = ?" );
-        if ( ! $stmt ) {
-            error_log( 'Trade Journal WP: Prepare failed: ' . $this->connection->error );
-            return false;
+        // If no user_id provided, get current user ID
+        if ( $user_id === null ) {
+            $user_id = get_current_user_id();
         }
 
-        $stmt->bind_param( "s", $id );
+        // Admins can delete any trade, regular users only their own
+        if ( current_user_can( 'manage_options' ) ) {
+            $sql = "DELETE FROM trading_journal_entries WHERE id = ?";
+            $stmt = $this->connection->prepare( $sql );
+            if ( ! $stmt ) {
+                error_log( 'Trade Journal WP: Prepare failed: ' . $this->connection->error );
+                return false;
+            }
+            $stmt->bind_param( "s", $id );
+        } else {
+            $sql = "DELETE FROM trading_journal_entries WHERE id = ? AND user_id = ?";
+            $stmt = $this->connection->prepare( $sql );
+            if ( ! $stmt ) {
+                error_log( 'Trade Journal WP: Prepare failed: ' . $this->connection->error );
+                return false;
+            }
+            $stmt->bind_param( "si", $id, $user_id );
+        }
 
         return $stmt->execute() && $stmt->affected_rows > 0;
     }
@@ -414,6 +484,7 @@ class Trade_Journal_Database {
     private function format_trade( $row ) {
         return array(
             'id'          => $row['id'] ?? '',
+            'user_id'     => isset( $row['user_id'] ) ? (int) $row['user_id'] : 0,
             'market'      => $row['market'] ?? '',
             'session'     => $row['session'] ?? '',
             'date'        => $row['date'] ?? '',
