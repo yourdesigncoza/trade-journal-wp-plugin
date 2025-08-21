@@ -220,38 +220,40 @@ class Trade_Journal_WP {
             $this->get_asset_version( 'assets/css/frontend.css' )
         );
 
+        // Below section commented as it's being loaded by the Child Theme 
+        
         // Enqueue Bootstrap if not already loaded
-        if ( ! wp_style_is( 'bootstrap', 'enqueued' ) ) {
-            wp_enqueue_style(
-                'trade-journal-wp-bootstrap',
-                'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css',
-                array(),
-                '5.3.2'
-            );
-        }
+        // if ( ! wp_style_is( 'bootstrap', 'enqueued' ) ) {
+        //     wp_enqueue_style(
+        //         'trade-journal-wp-bootstrap',
+        //         'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css',
+        //         array(),
+        //         '5.3.2'
+        //     );
+        // }
 
         // Enqueue Font Awesome if not already loaded
-        if ( ! wp_style_is( 'font-awesome', 'enqueued' ) ) {
-            wp_enqueue_style(
-                'trade-journal-wp-fontawesome',
-                'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
-                array(),
-                '6.4.0'
-            );
-        }
+        // if ( ! wp_style_is( 'font-awesome', 'enqueued' ) ) {
+        //     wp_enqueue_style(
+        //         'trade-journal-wp-fontawesome',
+        //         'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
+        //         array(),
+        //         '6.4.0'
+        //     );
+        // }
 
         // Enqueue scripts
-        wp_enqueue_script( 'jquery' );
+        // wp_enqueue_script( 'jquery' );
         
-        if ( ! wp_script_is( 'bootstrap', 'enqueued' ) ) {
-            wp_enqueue_script(
-                'trade-journal-wp-bootstrap',
-                'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js',
-                array( 'jquery' ),
-                '5.3.2',
-                true
-            );
-        }
+        // if ( ! wp_script_is( 'bootstrap', 'enqueued' ) ) {
+        //     wp_enqueue_script(
+        //         'trade-journal-wp-bootstrap',
+        //         'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js',
+        //         array( 'jquery' ),
+        //         '5.3.2',
+        //         true
+        //     );
+        // }
 
         wp_enqueue_script(
             'trade-journal-wp-frontend',
