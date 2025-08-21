@@ -101,7 +101,7 @@ $site_logo = get_custom_logo();
                                             <div class="col-sm-6">
                                                 <label class="form-label" for="trade-journal-confirm-password">Confirm Password</label>
                                                 <div class="position-relative" data-password="data-password">
-                                                    <input class="form-control form-icon-input pe-6" id="trade-journal-confirm-password" name="confirm_password" type="password" placeholder="Confirm Password" data-password-input="data-password-input" required />
+                                                    <input class="form-control form-icon-input pe-6" id="trade-journal-confirm-password" name="confirm_password" type="password" placeholder="Confirm" data-password-input="data-password-input" required />
                                                     <button class="btn px-3 py-0 h-100 position-absolute top-0 end-0 fs-7 text-body-tertiary" type="button" data-password-toggle="data-password-toggle">
                                                         <span class="uil uil-eye show"></span>
                                                         <span class="uil uil-eye-slash hide"></span>
