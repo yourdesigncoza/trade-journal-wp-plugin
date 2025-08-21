@@ -1,15 +1,5 @@
 /* Trade Journal WP Login Styles */
 /* Minimal custom styles - Phoenix framework provides most styling */
-
-.trade-journal-login-container .bg-auth-card-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    z-index: -1;
-}
-
 .trade-journal-login-container .auth-form-box {
     padding: 2rem;
 }

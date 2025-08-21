@@ -28,6 +28,12 @@ class Trade_Journal_Admin {
         // Register settings
         register_setting( 'trade_journal_wp_settings_group', 'trade_journal_wp_settings', array( $this, 'sanitize_settings' ) );
         register_setting( 'trade_journal_wp_settings_group', 'trade_journal_wp_db_config' );
+        register_setting( 'trade_journal_wp_settings_group', 'trade_journal_wp_login_page' );
+        register_setting( 'trade_journal_wp_settings_group', 'trade_journal_wp_forgot_password_page' );
+        register_setting( 'trade_journal_wp_settings_group', 'trade_journal_wp_register_page' );
+        register_setting( 'trade_journal_wp_settings_group', 'trade_journal_wp_default_redirect_page' );
+        register_setting( 'trade_journal_wp_settings_group', 'trade_journal_wp_logout_redirect_page' );
+        register_setting( 'trade_journal_wp_settings_group', 'trade_journal_wp_protected_pages' );
 
         // Add settings sections
         add_settings_section(
@@ -41,6 +47,20 @@ class Trade_Journal_Admin {
             'trade_journal_wp_database_section',
             __( 'Database Configuration', 'trade-journal-wp' ),
             array( $this, 'database_section_callback' ),
+            'trade_journal_wp_settings'
+        );
+
+        add_settings_section(
+            'trade_journal_wp_auth_section',
+            __( 'Authentication Pages', 'trade-journal-wp' ),
+            array( $this, 'auth_section_callback' ),
+            'trade_journal_wp_settings'
+        );
+
+        add_settings_section(
+            'trade_journal_wp_protected_section',
+            __( 'Protected Pages', 'trade-journal-wp' ),
+            array( $this, 'protected_section_callback' ),
             'trade_journal_wp_settings'
         );
 
@@ -123,6 +143,60 @@ class Trade_Journal_Admin {
             'trade_journal_wp_settings',
             'trade_journal_wp_database_section'
         );
+
+        // Login page
+        add_settings_field(
+            'login_page',
+            __( 'Login Page', 'trade-journal-wp' ),
+            array( $this, 'login_page_field_callback' ),
+            'trade_journal_wp_settings',
+            'trade_journal_wp_auth_section'
+        );
+
+        // Forgot password page
+        add_settings_field(
+            'forgot_password_page',
+            __( 'Forgot Password Page', 'trade-journal-wp' ),
+            array( $this, 'forgot_password_page_field_callback' ),
+            'trade_journal_wp_settings',
+            'trade_journal_wp_auth_section'
+        );
+
+        // Registration page
+        add_settings_field(
+            'register_page',
+            __( 'Registration Page', 'trade-journal-wp' ),
+            array( $this, 'register_page_field_callback' ),
+            'trade_journal_wp_settings',
+            'trade_journal_wp_auth_section'
+        );
+
+        // Default redirect page after login
+        add_settings_field(
+            'default_redirect_page',
+            __( 'Default Redirect After Login', 'trade-journal-wp' ),
+            array( $this, 'default_redirect_page_field_callback' ),
+            'trade_journal_wp_settings',
+            'trade_journal_wp_auth_section'
+        );
+
+        // Logout redirect page
+        add_settings_field(
+            'logout_redirect_page',
+            __( 'Default Redirect After Logout', 'trade-journal-wp' ),
+            array( $this, 'logout_redirect_page_field_callback' ),
+            'trade_journal_wp_settings',
+            'trade_journal_wp_auth_section'
+        );
+
+        // Protected pages
+        add_settings_field(
+            'protected_pages',
+            __( 'Pages Requiring Login', 'trade-journal-wp' ),
+            array( $this, 'protected_pages_field_callback' ),
+            'trade_journal_wp_settings',
+            'trade_journal_wp_protected_section'
+        );
     }
 
     /**
@@ -140,6 +214,13 @@ class Trade_Journal_Admin {
         
         // Test connection button
         echo '<p><button type="button" id="testDbConnection" class="button">' . esc_html__( 'Test Connection', 'trade-journal-wp' ) . '</button> <span id="connectionStatus"></span></p>';
+    }
+
+    /**
+     * Authentication section callback
+     */
+    public function auth_section_callback() {
+        echo '<p>' . esc_html__( 'Configure which pages contain your login and forgot password forms. The plugin will automatically detect pages with the appropriate shortcodes, but you can manually specify them here as a fallback.', 'trade-journal-wp' ) . '</p>';
     }
 
     /**
@@ -260,6 +341,194 @@ class Trade_Journal_Admin {
         
         echo '<input type="number" name="trade_journal_wp_db_config[port]" value="' . esc_attr( $port ) . '" class="small-text" min="1" max="65535" />';
         echo '<p class="description">' . esc_html__( 'MySQL database port (usually 3306)', 'trade-journal-wp' ) . '</p>';
+    }
+
+    /**
+     * Login page field callback
+     */
+    public function login_page_field_callback() {
+        $login_page_id = get_option( 'trade_journal_wp_login_page', '' );
+        
+        // Get all published pages
+        $pages = get_pages( array(
+            'post_status' => 'publish',
+            'sort_column' => 'post_title'
+        ) );
+        
+        echo '<select name="trade_journal_wp_login_page" class="regular-text">';
+        echo '<option value="">' . esc_html__( 'Auto-detect (recommended)', 'trade-journal-wp' ) . '</option>';
+        
+        foreach ( $pages as $page ) {
+            $selected = selected( $login_page_id, $page->ID, false );
+            echo '<option value="' . esc_attr( $page->ID ) . '"' . $selected . '>' . esc_html( $page->post_title ) . '</option>';
+        }
+        
+        echo '</select>';
+        echo '<p class="description">' . esc_html__( 'Select the page that contains the [trade_journal_login] shortcode. Leave as "Auto-detect" to automatically find the page.', 'trade-journal-wp' ) . '</p>';
+    }
+
+    /**
+     * Forgot password page field callback
+     */
+    public function forgot_password_page_field_callback() {
+        $forgot_password_page_id = get_option( 'trade_journal_wp_forgot_password_page', '' );
+        
+        // Get all published pages
+        $pages = get_pages( array(
+            'post_status' => 'publish',
+            'sort_column' => 'post_title'
+        ) );
+        
+        echo '<select name="trade_journal_wp_forgot_password_page" class="regular-text">';
+        echo '<option value="">' . esc_html__( 'Auto-detect (recommended)', 'trade-journal-wp' ) . '</option>';
+        
+        foreach ( $pages as $page ) {
+            $selected = selected( $forgot_password_page_id, $page->ID, false );
+            echo '<option value="' . esc_attr( $page->ID ) . '"' . $selected . '>' . esc_html( $page->post_title ) . '</option>';
+        }
+        
+        echo '</select>';
+        echo '<p class="description">' . esc_html__( 'Select the page that contains the [trade_journal_forgot_password] shortcode. Leave as "Auto-detect" to automatically find the page.', 'trade-journal-wp' ) . '</p>';
+    }
+
+    /**
+     * Registration page field callback
+     */
+    public function register_page_field_callback() {
+        $register_page_id = get_option( 'trade_journal_wp_register_page', '' );
+        
+        // Get all published pages
+        $pages = get_pages( array(
+            'post_status' => 'publish',
+            'sort_column' => 'post_title'
+        ) );
+        
+        echo '<select name="trade_journal_wp_register_page" class="regular-text">';
+        echo '<option value="">' . esc_html__( 'Auto-detect (recommended)', 'trade-journal-wp' ) . '</option>';
+        
+        foreach ( $pages as $page ) {
+            $selected = selected( $register_page_id, $page->ID, false );
+            echo '<option value="' . esc_attr( $page->ID ) . '"' . $selected . '>' . esc_html( $page->post_title ) . '</option>';
+        }
+        
+        echo '</select>';
+        echo '<p class="description">' . esc_html__( 'Select the page that contains the [trade_journal_register] shortcode. Leave as "Auto-detect" to automatically find the page.', 'trade-journal-wp' ) . '</p>';
+    }
+
+    /**
+     * Default redirect page field callback
+     */
+    public function default_redirect_page_field_callback() {
+        $redirect_page_id = get_option( 'trade_journal_wp_default_redirect_page', '' );
+        
+        // Get all published pages
+        $pages = get_pages( array(
+            'post_status' => 'publish',
+            'sort_column' => 'post_title'
+        ) );
+        
+        echo '<select name="trade_journal_wp_default_redirect_page" class="regular-text">';
+        echo '<option value="">' . esc_html__( 'Home Page (default)', 'trade-journal-wp' ) . '</option>';
+        
+        foreach ( $pages as $page ) {
+            $selected = selected( $redirect_page_id, $page->ID, false );
+            echo '<option value="' . esc_attr( $page->ID ) . '"' . $selected . '>' . esc_html( $page->post_title ) . '</option>';
+        }
+        
+        echo '</select>';
+        echo '<p class="description">' . esc_html__( 'Select the page where users will be redirected after successful login. This applies when no specific redirect URL is provided.', 'trade-journal-wp' ) . '</p>';
+    }
+
+    /**
+     * Logout redirect page field callback
+     */
+    public function logout_redirect_page_field_callback() {
+        $logout_redirect_page_id = get_option( 'trade_journal_wp_logout_redirect_page', '' );
+        
+        // Get all published pages
+        $pages = get_pages( array(
+            'post_status' => 'publish',
+            'sort_column' => 'post_title'
+        ) );
+        
+        echo '<select name="trade_journal_wp_logout_redirect_page" class="regular-text">';
+        echo '<option value="">' . esc_html__( 'Login Page (default)', 'trade-journal-wp' ) . '</option>';
+        echo '<option value="home"' . selected( $logout_redirect_page_id, 'home', false ) . '>' . esc_html__( 'Home Page', 'trade-journal-wp' ) . '</option>';
+        
+        foreach ( $pages as $page ) {
+            $selected = selected( $logout_redirect_page_id, $page->ID, false );
+            echo '<option value="' . esc_attr( $page->ID ) . '"' . $selected . '>' . esc_html( $page->post_title ) . '</option>';
+        }
+        
+        echo '</select>';
+        echo '<p class="description">' . esc_html__( 'Select the page where users will be redirected after logging out. Default is the login page with a logout success message.', 'trade-journal-wp' ) . '</p>';
+    }
+
+    /**
+     * Protected section callback
+     */
+    public function protected_section_callback() {
+        echo '<p>' . esc_html__( 'Select pages that require users to be logged in. Visitors accessing these pages while logged out will be redirected to the login page and returned here after successful authentication.', 'trade-journal-wp' ) . '</p>';
+    }
+
+    /**
+     * Protected pages field callback
+     */
+    public function protected_pages_field_callback() {
+        $protected_pages = get_option( 'trade_journal_wp_protected_pages', array() );
+        
+        // Ensure we have an array
+        if ( ! is_array( $protected_pages ) ) {
+            $protected_pages = array();
+        }
+        
+        // Get all published pages
+        $pages = get_pages( array(
+            'post_status' => 'publish',
+            'sort_column' => 'post_title'
+        ) );
+        
+        if ( empty( $pages ) ) {
+            echo '<p>' . esc_html__( 'No pages found.', 'trade-journal-wp' ) . '</p>';
+            return;
+        }
+        
+        echo '<div class="protected-pages-wrapper">';
+        echo '<div class="protected-pages-controls mb-3">';
+        echo '<button type="button" class="button" id="select-all-pages">' . esc_html__( 'Select All', 'trade-journal-wp' ) . '</button> ';
+        echo '<button type="button" class="button" id="select-none-pages">' . esc_html__( 'Select None', 'trade-journal-wp' ) . '</button>';
+        echo '</div>';
+        
+        echo '<div class="protected-pages-list" style="max-height: 200px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; background: #f9f9f9;">';
+        
+        foreach ( $pages as $page ) {
+            $checked = in_array( $page->ID, $protected_pages ) ? 'checked' : '';
+            echo '<div class="protected-page-item" style="margin-bottom: 5px;">';
+            echo '<label>';
+            echo '<input type="checkbox" name="trade_journal_wp_protected_pages[]" value="' . esc_attr( $page->ID ) . '" ' . $checked . ' class="protected-page-checkbox" /> ';
+            echo esc_html( $page->post_title );
+            echo '<span class="page-url" style="color: #666; font-size: 12px; margin-left: 10px;">(' . esc_html( get_permalink( $page->ID ) ) . ')</span>';
+            echo '</label>';
+            echo '</div>';
+        }
+        
+        echo '</div>';
+        echo '</div>';
+        
+        echo '<p class="description">' . esc_html__( 'Select pages that should only be accessible to logged-in users. When a non-logged-in user tries to access these pages, they will be redirected to the login page.', 'trade-journal-wp' ) . '</p>';
+        
+        // Add JavaScript for select all/none functionality
+        echo '<script>
+        jQuery(document).ready(function($) {
+            $("#select-all-pages").on("click", function() {
+                $(".protected-page-checkbox").prop("checked", true);
+            });
+            
+            $("#select-none-pages").on("click", function() {
+                $(".protected-page-checkbox").prop("checked", false);
+            });
+        });
+        </script>';
     }
 
     /**

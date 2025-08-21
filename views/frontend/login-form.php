@@ -5,12 +5,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 $site_name = get_bloginfo( 'name' );
 $site_logo = get_custom_logo();
-$forgot_password_url = wp_lostpassword_url();
 ?>
 
 <div class="trade-journal-login-container <?php echo esc_attr( $custom_class ); ?>">
     <div class="container-fluid">
-        <div class="bg-holder bg-auth-card-overlay" style="background-image:url(<?php echo esc_url( plugin_dir_url( dirname( dirname( __FILE__ ) ) ) . 'assets/img/bg/37.png' ); ?>);"></div>
         <div class="row flex-center position-relative min-vh-100 g-0 py-5">
             <div class="col-11 col-sm-10 col-xl-8">
                 <div class="card border border-translucent auth-card">
@@ -68,7 +66,19 @@ $forgot_password_url = wp_lostpassword_url();
                                     </div>
 
                                     <!-- Login Messages -->
-                                    <div id="trade-journal-login-messages"></div>
+                                    <div id="trade-journal-login-messages">
+                                        <?php
+                                        // Show logout success message
+                                        if ( isset( $_GET['loggedout'] ) && $_GET['loggedout'] === 'true' ) {
+                                            echo '<div class="text-center mb-3">
+                                                <span class="d-inline-flex align-items-center text-info fs-9 py-1">
+                                                    <i class="fas fa-info-circle me-1 fs-10"></i>
+                                                    You have been logged out successfully.
+                                                </span>
+                                            </div>';
+                                        }
+                                        ?>
+                                    </div>
 
                                     <!-- Login Form -->
                                     <form id="trade-journal-login-form" method="post">
@@ -117,16 +127,21 @@ $forgot_password_url = wp_lostpassword_url();
                                             </div>
                                         </div>
 
-                                        <!-- Remember Me & Forgot Password -->
-                                        <div class="row flex-between-center mb-7">
-                                            <div class="col-auto">
-                                                <div class="form-check mb-0">
+                                        <!-- Auth Links and Remember Me Row -->
+                                        <div class="row mb-4">
+                                            <div class="col-6">
+                                                <div class="form-check d-inline-block">
                                                     <input class="form-check-input" id="trade-journal-remember" name="remember" type="checkbox" value="1" />
-                                                    <label class="form-check-label mb-0" for="trade-journal-remember">Remember me</label>
+                                                    <label class="form-check-label" for="trade-journal-remember">Remember me</label>
                                                 </div>
                                             </div>
-                                            <div class="col-auto">
-                                                <a class="btn btn-link fs-9 fw-semibold p-0" href="<?php echo esc_url( $forgot_password_url ); ?>">Forgot Password?</a>
+                                            <div class="col-6 text-end">
+                                                <div>
+                                                    <a class="btn btn-link fs-9 fw-semibold p-0" href="<?php echo esc_url( $forgot_password_url ); ?>">Forgot Password?</a>
+                                                </div>
+                                                <div>
+                                                    <a class="btn btn-link fs-9 fw-semibold p-0" href="<?php echo esc_url( $register_url ); ?>">Create an account</a>
+                                                </div>
                                             </div>
                                         </div>
 
@@ -138,13 +153,6 @@ $forgot_password_url = wp_lostpassword_url();
                                                 Signing In...
                                             </span>
                                         </button>
-
-                                        <!-- Register Link -->
-                                        <?php if ( get_option( 'users_can_register' ) ) : ?>
-                                            <div class="text-center">
-                                                <a class="btn btn-link fs-9 fw-bold p-0" href="<?php echo esc_url( wp_registration_url() ); ?>">Create an account</a>
-                                            </div>
-                                        <?php endif; ?>
                                     </form>
                                 </div>
                             </div>

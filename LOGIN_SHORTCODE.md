@@ -5,21 +5,61 @@ The Trade Journal WP plugin now includes a custom WordPress login page using the
 
 ## Shortcode Usage
 
-### Basic Usage
+### Login Shortcode
+
+#### Basic Usage
 ```
 [trade_journal_login]
 ```
 
-### With Attributes
+#### With Attributes
 ```
 [trade_journal_login redirect_to="/dashboard" class="my-custom-class" show_title="false"]
 ```
 
+### Registration Shortcode
+
+#### Basic Usage
+```
+[trade_journal_register]
+```
+
+#### With Attributes
+```
+[trade_journal_register redirect_to="/welcome" class="my-custom-class" show_title="false"]
+```
+
+### Forgot Password Shortcode
+
+#### Basic Usage
+```
+[trade_journal_forgot_password]
+```
+
+#### With Attributes
+```
+[trade_journal_forgot_password class="my-custom-class" show_title="false"]
+```
+
 ## Shortcode Attributes
 
+### Login Shortcode Attributes
 | Attribute | Type | Default | Description |
 |-----------|------|---------|-------------|
 | `redirect_to` | string | `home_url()` | URL to redirect after successful login |
+| `class` | string | `""` | Additional CSS classes for the container |
+| `show_title` | boolean | `true` | Show/hide the site title and description |
+
+### Registration Shortcode Attributes
+| Attribute | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `redirect_to` | string | `home_url()` | URL to redirect after successful registration |
+| `class` | string | `""` | Additional CSS classes for the container |
+| `show_title` | boolean | `true` | Show/hide the site title and description |
+
+### Forgot Password Shortcode Attributes
+| Attribute | Type | Default | Description |
+|-----------|------|---------|-------------|
 | `class` | string | `""` | Additional CSS classes for the container |
 | `show_title` | boolean | `true` | Show/hide the site title and description |
 
@@ -33,8 +73,15 @@ The Trade Journal WP plugin now includes a custom WordPress login page using the
 - ✅ **Dark Mode Support** - Adapts to user's theme preference
 - ✅ **Remember Me** - Standard WordPress remember functionality
 - ✅ **Forgot Password** - Links to WordPress password reset
-- ✅ **Registration Link** - Shows if user registration is enabled
+- ✅ **Registration Link** - Shows if user registration is enabled  
 - ✅ **Error Handling** - User-friendly error messages with Phoenix Alert Subtle styling
+- ✅ **Auto-Redirect** - Automatically redirects wp-login.php to your custom login page
+- ✅ **Logout Handling** - Shows "logged out successfully" message from WordPress logout
+- ✅ **Forgot Password** - Complete password reset system with Phoenix Card design
+- ✅ **User Registration** - Full registration system with Phoenix Card design and validation
+- ✅ **Email Integration** - Uses WordPress core password reset and user notification functionality
+- ✅ **Auto-Login** - Automatically logs in users after successful registration
+- ✅ **Password Validation** - Real-time password matching and strength requirements
 
 ## Usage Examples
 
@@ -61,6 +108,64 @@ Use in a widget or modal with custom styling:
 ```
 [trade_journal_login class="compact-form" show_title="false"]
 ```
+
+## Registration Examples
+
+### 1. Basic Registration Page
+Create a page with the registration shortcode:
+```
+[trade_journal_register]
+```
+
+### 2. Registration with Custom Redirect
+Redirect users to a welcome page after registration:
+```
+[trade_journal_register redirect_to="/welcome-dashboard"]
+```
+
+### 3. Minimal Registration Form
+Hide the title and branding:
+```
+[trade_journal_register show_title="false" class="minimal-register"]
+```
+
+## Forgot Password Shortcode
+
+### Basic Usage
+```
+[trade_journal_forgot_password]
+```
+
+### With Attributes
+```
+[trade_journal_forgot_password class="my-custom-class" show_title="false"]
+```
+
+### Shortcode Attributes
+| Attribute | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `class` | string | `""` | Additional CSS classes for the container |
+| `show_title` | boolean | `true` | Show/hide the site title and description |
+
+## WordPress Login Redirect Setup
+
+The plugin automatically redirects `wp-login.php` to your custom authentication pages when:
+
+1. **Create a Login Page**: Create a new WordPress page (e.g., "Login") 
+2. **Add the Login Shortcode**: Put `[trade_journal_login]` in the page content
+3. **Create a Registration Page**: Create another page (e.g., "Register")
+4. **Add the Registration Shortcode**: Put `[trade_journal_register]` in the page content
+5. **Create a Forgot Password Page**: Create another page (e.g., "Forgot Password")
+6. **Add the Forgot Password Shortcode**: Put `[trade_journal_forgot_password]` in the page content
+7. **Publish All Pages**: The plugin will automatically find and use these pages
+
+### How the Redirect Works:
+- Visitors to `wp-login.php` are automatically redirected to your Phoenix login page
+- Visitors to `wp-login.php?action=register` are redirected to your registration page
+- Visitors to `wp-login.php?action=lostpassword` are redirected to your forgot password page
+- All URL parameters are preserved (`loggedout=true`, `wp_lang=en_US`, `redirect_to`, etc.)
+- Shows "You have been logged out successfully" message when coming from logout
+- Maintains all WordPress functionality while providing custom Phoenix styling
 
 ## Styling
 

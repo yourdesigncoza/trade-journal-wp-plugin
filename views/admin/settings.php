@@ -103,9 +103,15 @@ if ( ! defined( 'ABSPATH' ) ) {
                         <li><code>[trade_journal_list]</code> - <?php esc_html_e( 'Trade history table', 'trade-journal-wp' ); ?></li>
                         <li><code>[trade_journal_stats]</code> - <?php esc_html_e( 'Performance statistics', 'trade-journal-wp' ); ?></li>
                         <li><code>[trade_journal_checklist]</code> - <?php esc_html_e( 'Pre-trade strategy checklist', 'trade-journal-wp' ); ?></li>
+                        <li><code>[trade_journal_login]</code> - <?php esc_html_e( 'Custom login page with Phoenix design', 'trade-journal-wp' ); ?></li>
+                        <li><code>[trade_journal_forgot_password]</code> - <?php esc_html_e( 'Password reset page with Phoenix design', 'trade-journal-wp' ); ?></li>
+                        <li><code>[trade_journal_register]</code> - <?php esc_html_e( 'User registration page with Phoenix design', 'trade-journal-wp' ); ?></li>
                     </ul>
                     
-                    <h4><?php esc_html_e( 'Step 4: Customize Settings', 'trade-journal-wp' ); ?></h4>
+                    <h4><?php esc_html_e( 'Step 4: Configure Page Protection', 'trade-journal-wp' ); ?></h4>
+                    <p><?php esc_html_e( 'Use the "Protected Pages" section to select which pages require user login. Non-logged-in visitors will be redirected to the login page and returned after successful authentication.', 'trade-journal-wp' ); ?></p>
+                    
+                    <h4><?php esc_html_e( 'Step 5: Customize Settings', 'trade-journal-wp' ); ?></h4>
                     <p><?php esc_html_e( 'Adjust the available markets, sessions, and timeframes to match your trading preferences using the settings above.', 'trade-journal-wp' ); ?></p>
                     
                     <div class="notice notice-info inline" style="margin-top: 20px;">
