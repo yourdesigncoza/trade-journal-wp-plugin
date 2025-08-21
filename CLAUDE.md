@@ -22,16 +22,25 @@ This is a WordPress plugin called "Trade Journal WP" that provides comprehensive
 ```sql
 CREATE TABLE trading_journal_entries (
     id varchar(255) NOT NULL,
+    user_id int(11) NOT NULL DEFAULT 0,
     market enum('XAUUSD','EU','GU','UJ','US30','NAS100') NOT NULL,
     session enum('LO','NY','AS') NOT NULL,
     date date NOT NULL,
     time time DEFAULT NULL,
     direction enum('LONG','SHORT') NOT NULL,
+    order_type enum('Market','Limit','Stop') DEFAULT NULL,
+    strategy varchar(255) DEFAULT NULL,
+    stop_loss decimal(10,5) DEFAULT NULL,
+    take_profit decimal(10,5) DEFAULT NULL,
     entry_price decimal(10,5) DEFAULT NULL,
     exit_price decimal(10,5) DEFAULT NULL,
     outcome enum('W','L','BE','C') DEFAULT NULL,
     pl_percent decimal(10,2) DEFAULT NULL,
     rr decimal(10,2) DEFAULT NULL,
+    absolute_pl decimal(10,2) DEFAULT NULL,
+    disciplined enum('Y','N') DEFAULT NULL,
+    followed_rules enum('Y','N') DEFAULT NULL,
+    rating tinyint(1) DEFAULT NULL,
     tf json DEFAULT NULL,
     chart_htf text DEFAULT NULL,
     chart_ltf text DEFAULT NULL,
@@ -42,7 +51,13 @@ CREATE TABLE trading_journal_entries (
     KEY idx_date (date),
     KEY idx_market (market),
     KEY idx_outcome (outcome),
-    KEY idx_created_at (created_at)
+    KEY idx_order_type (order_type),
+    KEY idx_strategy (strategy),
+    KEY idx_disciplined (disciplined),
+    KEY idx_followed_rules (followed_rules),
+    KEY idx_rating (rating),
+    KEY idx_created_at (created_at),
+    KEY idx_user_date (user_id, date)
 );
 ```
 
@@ -75,18 +90,29 @@ The frontend uses Phoenix framework CSS classes for professional appearance:
 - **Icon Integration**: FontAwesome icons with consistent sizing and colors
 
 ### Column Icons
-Each table column header includes a FontAwesome icon:
+Each table column header includes a FontAwesome icon (22 total columns):
 - Date: `fas fa-calendar-alt text-primary`
 - Time: `fas fa-clock text-info`
 - Market: `fas fa-coins text-primary`
 - Session: `fas fa-globe text-info`
 - Direction: `fas fa-arrows-alt-v text-warning`
-- Entry/Exit Price: `fas fa-sign-in-alt/sign-out-alt text-success/danger`
+- Order Type: `fas fa-shopping-cart text-info`
+- Strategy: `fas fa-chess text-primary`
+- Stop Loss: `fas fa-shield-alt text-danger`
+- Take Profit: `fas fa-bullseye text-success`
+- Entry Price: `fas fa-sign-in-alt text-success`
+- Exit Price: `fas fa-sign-out-alt text-danger`
 - Outcome: `fas fa-trophy text-warning`
-- P/L %: `fas fa-percentage text-purple`
+- P/L %: `fas fa-percentage text-success`
 - RR: `fas fa-balance-scale text-purple`
+- Absolute P/L: `fas fa-dollar-sign text-success`
+- Disciplined: `fas fa-user-check text-warning`
+- Followed Rules: `fas fa-clipboard-check text-info`
+- Rating: `fas fa-star text-warning`
 - TF: `fas fa-chart-line text-info`
-- Chart Links: `fas fa-chart-bar/chart-area text-warning`
+- Chart HTF: `fas fa-chart-bar text-warning`
+- Chart LTF: `fas fa-chart-area text-warning`
+- Actions: (no icon)
 
 ## Configuration & Settings
 
@@ -118,11 +144,13 @@ Settings stored in `trade_journal_wp_settings` WordPress option:
 - Bootstrap tooltips initialized for comments display
 
 ### Data Flow
-1. Frontend forms → AJAX → WordPress handlers
-2. WordPress handlers → Database class → External MySQL
-3. Statistics calculated on database level
-4. Real-time updates via jQuery events
-5. Tooltip initialization for interactive elements
+1. **Initial Load**: PHP renders table with data from database
+2. **JavaScript Initialization**: `initializeTradesFromDOM()` reads existing table data into JavaScript arrays (eliminates duplicate AJAX call)
+3. **CRUD Operations**: Frontend forms → AJAX → WordPress handlers → Database class → External MySQL
+4. **Data Updates**: After add/edit/delete operations, `loadTrades()` refreshes data via AJAX
+5. **Statistics**: Calculated on database level and updated after operations
+6. **Interactive Features**: Filtering, sorting, pagination work with JavaScript arrays
+7. **Real-time Updates**: jQuery events handle UI updates and tooltip initialization
 
 ### Price Formatting
 The `format_price()` method truncates prices to 3 decimal places without rounding:
@@ -157,6 +185,25 @@ To test functionality:
 7. Test Bootstrap tooltips on comments column
 8. Verify Phoenix styling renders correctly
 
+## Recent Enhancements
+
+### Comprehensive Trade Fields (24 total fields)
+The plugin now includes 8 additional trade analysis fields:
+- **Order Type**: Market, Limit, or Stop orders
+- **Strategy**: Custom strategy name/description
+- **Stop Loss**: Risk management price level
+- **Take Profit**: Target profit price level
+- **Absolute P/L**: Dollar amount profit/loss
+- **Disciplined**: Y/N flag for trade discipline assessment
+- **Followed Rules**: Y/N flag for rule adherence tracking
+- **Rating**: 1-5 star rating system for trade quality
+
+### Performance Optimization
+- **Eliminated Duplicate Loading**: Initial page load uses PHP-rendered data, JavaScript reads from DOM instead of making redundant AJAX call
+- **DOM Data Parsing**: `initializeTradesFromDOM()` function converts existing table data to JavaScript arrays
+- **Selective AJAX**: Only refresh data via AJAX after CRUD operations or manual refresh
+- **22-Column Table**: All columns properly aligned between headers and data cells
+
 ## Important Notes
 
 - **External Database**: Always remember this uses external MySQL, not WordPress DB
@@ -166,6 +213,7 @@ To test functionality:
 - **Bootstrap Dependency**: Frontend assumes Bootstrap 5 is available
 - **PHP Requirements**: Requires PHP 7.4+, WordPress 5.0+
 - **No Rounding**: Price formatting truncates values without rounding up
+- **Multi-User Support**: Trades are associated with WordPress user IDs
 
 ## Common Operations
 
