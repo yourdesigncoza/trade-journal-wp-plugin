@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pie Charts - Phoenix Theme</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+</head>
+<body>
+    <!-- Extracted from Phoenix theme source -->
+    <section class="chart-examples">
+        
+        <!-- Example 1: Basic Pie Chart -->
+        <div class="example-section">
+            <h4>Basic Pie Chart</h4>
+            <div id="basicPieChart" style="width: 100%; height: 400px;" class="border rounded p-3 bg-white"></div>
+        </div>
+
+        <!-- Example 2: Doughnut Chart -->
+        <div class="example-section">
+            <h4>Doughnut Chart</h4>
+            <div id="doughnutChart" style="width: 100%; height: 400px;" class="border rounded p-3 bg-white"></div>
+        </div>
+
+    </section>
+    
+    <script>
+        // Basic Pie Chart
+        var pieChart = echarts.init(document.getElementById('basicPieChart'));
+        var pieOption = {
+            title: {
+                text: 'Market Share Distribution',
+                left: 'center'
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: '{a} <br/>{b} : {c} ({d}%)'
+            },
+            legend: {
+                orient: 'vertical',
+                left: 'left',
+                data: ['Product A', 'Product B', 'Product C', 'Product D', 'Product E']
+            },
+            series: [{
+                name: 'Market Share',
+                type: 'pie',
+                radius: '55%',
+                center: ['50%', '60%'],
+                data: [
+                    {value: 335, name: 'Product A', itemStyle: {color: '#007bff'}},
+                    {value: 310, name: 'Product B', itemStyle: {color: '#28a745'}},
+                    {value: 234, name: 'Product C', itemStyle: {color: '#dc3545'}},
+                    {value: 135, name: 'Product D', itemStyle: {color: '#ffc107'}},
+                    {value: 1548, name: 'Product E', itemStyle: {color: '#17a2b8'}}
+                ],
+                emphasis: {
+                    itemStyle: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                }
+            }]
+        };
+        pieChart.setOption(pieOption);
+
+        // Doughnut Chart
+        var doughnutChart = echarts.init(document.getElementById('doughnutChart'));
+        var doughnutOption = {
+            title: {
+                text: 'Traffic Sources',
+                left: 'center'
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: '{a} <br/>{b}: {c} ({d}%)'
+            },
+            legend: {
+                top: '5%',
+                left: 'center',
+                data: ['Direct', 'Email', 'Ads', 'Video', 'Search']
+            },
+            series: [{
+                name: 'Traffic Source',
+                type: 'pie',
+                radius: ['40%', '70%'],
+                avoidLabelOverlap: false,
+                label: {
+                    show: false,
+                    position: 'center'
+                },
+                emphasis: {
+                    label: {
+                        show: true,
+                        fontSize: '30',
+                        fontWeight: 'bold'
+                    }
+                },
+                labelLine: {
+                    show: false
+                },
+                data: [
+                    {value: 1048, name: 'Direct', itemStyle: {color: '#6f42c1'}},
+                    {value: 735, name: 'Email', itemStyle: {color: '#e83e8c'}},
+                    {value: 580, name: 'Ads', itemStyle: {color: '#fd7e14'}},
+                    {value: 484, name: 'Video', itemStyle: {color: '#20c997'}},
+                    {value: 300, name: 'Search', itemStyle: {color: '#6c757d'}}
+                ]
+            }]
+        };
+        doughnutChart.setOption(doughnutOption);
+
+        // Make charts responsive
+        window.addEventListener('resize', function () {
+            pieChart.resize();
+            doughnutChart.resize();
+        });
+    </script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

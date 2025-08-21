@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DHTMLX Gantt - Phoenix Theme</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.dhtmlx.com/gantt/edge/dhtmlxgantt.js"></script>
+    <link href="https://cdn.dhtmlx.com/gantt/edge/dhtmlxgantt.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Extracted from Phoenix theme source -->
+    <section class="gantt-examples">
+        
+        <!-- Example 1: Basic Gantt Chart -->
+        <div class="example-section">
+            <h4>Basic DHTMLX Gantt Chart</h4>
+            <div id="gantt_here" style="width:100%; height:400px;" class="border"></div>
+        </div>
+
+        <!-- Example 2: Gantt Features -->
+        <div class="example-section">
+            <h4>Gantt Chart Features</h4>
+            <div class="alert alert-info">
+                <h6>DHTMLX Gantt Integration</h6>
+                <p>This Gantt chart component uses DHTMLX Gantt library. Features include:</p>
+                <ul class="mb-0">
+                    <li>Project timeline visualization</li>
+                    <li>Task dependencies and relationships</li>
+                    <li>Drag and drop task editing</li>
+                    <li>Progress tracking</li>
+                    <li>Resource management</li>
+                </ul>
+            </div>
+        </div>
+
+    </section>
+    
+    <script>
+        gantt.config.date_format = "%Y-%m-%d %H:%i:%s";
+        
+        var tasks = {
+            data: [
+                {id: 1, text: "Project #1", start_date: "2024-04-01 00:00:00", duration: 11, progress: 0.6, open: true},
+                {id: 2, text: "Task #1", start_date: "2024-04-01 00:00:00", duration: 5, progress: 1, parent: 1},
+                {id: 3, text: "Task #2", start_date: "2024-04-06 00:00:00", duration: 4, progress: 0.5, parent: 1},
+                {id: 4, text: "Task #3", start_date: "2024-04-10 00:00:00", duration: 2, progress: 0, parent: 1},
+                {id: 5, text: "Project #2", start_date: "2024-04-15 00:00:00", duration: 8, progress: 0.2, open: true},
+                {id: 6, text: "Task #1", start_date: "2024-04-15 00:00:00", duration: 4, progress: 0.8, parent: 5},
+                {id: 7, text: "Task #2", start_date: "2024-04-19 00:00:00", duration: 4, progress: 0, parent: 5}
+            ],
+            links: [
+                {id: 1, source: 2, target: 3, type: "0"},
+                {id: 2, source: 3, target: 4, type: "0"}
+            ]
+        };
+        
+        gantt.init("gantt_here");
+        gantt.parse(tasks);
+    </script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

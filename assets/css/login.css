@@ -1,0 +1,48 @@
+/* Trade Journal WP Login Styles */
+/* Minimal custom styles - Phoenix framework provides most styling */
+
+.trade-journal-login-container .bg-auth-card-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    z-index: -1;
+}
+
+.trade-journal-login-container .auth-form-box {
+    padding: 2rem;
+}
+
+/* Phoenix bg-holder styling */
+.trade-journal-login-container .bg-holder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: -1;
+}
+
+/* Loading state - custom functionality */
+.trade-journal-login-container .login-spinner {
+    display: none;
+}
+
+.trade-journal-login-container .btn:disabled .login-text {
+    display: none;
+}
+
+.trade-journal-login-container .btn:disabled .login-spinner {
+    display: inline-block;
+}
+
+/* Responsive form padding only */
+@media (max-width: 575.98px) {
+    .trade-journal-login-container .auth-form-box {
+        padding: 1rem;
+    }
+}

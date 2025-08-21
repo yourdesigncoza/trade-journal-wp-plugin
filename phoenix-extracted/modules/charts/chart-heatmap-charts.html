@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heatmap Charts - Phoenix Theme</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+</head>
+<body>
+    <!-- Extracted from Phoenix theme source -->
+    <section class="chart-examples">
+        
+        <!-- Example 1: Basic Heatmap -->
+        <div class="example-section">
+            <h4>Activity Heatmap</h4>
+            <div id="heatmapChart" style="width: 100%; height: 400px;" class="border rounded p-3 bg-white"></div>
+        </div>
+
+    </section>
+    
+    <script>
+        var heatmapChart = echarts.init(document.getElementById('heatmapChart'));
+        var hours = ['12a', '1a', '2a', '3a', '4a', '5a', '6a', '7a', '8a', '9a', '10a', '11a',
+                     '12p', '1p', '2p', '3p', '4p', '5p', '6p', '7p', '8p', '9p', '10p', '11p'];
+        var days = ['Saturday', 'Friday', 'Thursday', 'Wednesday', 'Tuesday', 'Monday', 'Sunday'];
+        
+        var heatmapData = [];
+        for (let i = 0; i < days.length; i++) {
+            for (let j = 0; j < hours.length; j++) {
+                heatmapData.push([j, i, Math.floor(Math.random() * 100)]);
+            }
+        }
+        
+        var heatmapOption = {
+            title: {
+                text: 'Weekly Activity Heatmap'
+            },
+            tooltip: {
+                position: 'top'
+            },
+            animation: false,
+            grid: {
+                height: '50%',
+                top: '10%'
+            },
+            xAxis: {
+                type: 'category',
+                data: hours,
+                splitArea: {
+                    show: true
+                }
+            },
+            yAxis: {
+                type: 'category',
+                data: days,
+                splitArea: {
+                    show: true
+                }
+            },
+            visualMap: {
+                min: 0,
+                max: 100,
+                calculable: true,
+                orient: 'horizontal',
+                left: 'center',
+                bottom: '15%',
+                inRange: {
+                    color: ['#ffffcc', '#a1dab4', '#41b6c4', '#2c7fb8', '#253494']
+                }
+            },
+            series: [{
+                name: 'Activity Level',
+                type: 'heatmap',
+                data: heatmapData,
+                label: {
+                    show: true
+                },
+                emphasis: {
+                    itemStyle: {
+                        shadowBlur: 10,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                }
+            }]
+        };
+        heatmapChart.setOption(heatmapOption);
+
+        window.addEventListener('resize', function () {
+            heatmapChart.resize();
+        });
+    </script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

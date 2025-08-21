@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phoenix Line Charts</title>
+</head>
+<body>
+
+<!-- 
+    PHOENIX LINE CHARTS COMPONENT
+    ==============================
+    
+    Purpose: Line chart implementations using ECharts library
+    Description: Various line chart types including basic, area, smooth, and multi-series charts
+    ECharts Documentation: https://echarts.apache.org/en/option.html#series-line
+    
+    Required Dependencies:
+    - ECharts JavaScript library (echarts.min.js)
+    - Phoenix theme colors and styling
+    
+    Chart Types:
+    - Basic Line Chart
+    - Area Line Chart  
+    - Smooth Line Chart
+    - Multi-series Line Chart
+    - Stacked Line Chart
+    - Step Line Chart
+    
+    Usage: Include ECharts library and initialize charts with provided configurations
+-->
+
+<!-- ============================================ -->
+<!-- BASIC LINE CHART -->
+<!-- ============================================ -->
+<section id="basic-line-chart">
+    <h3>Basic Line Chart</h3>
+    <p>Simple line chart showing data trends over time.</p>
+    
+    <div id="basicLineChart" style="height: 400px; width: 100%;"></div>
+    
+    <script type="text/javascript">
+        // Basic Line Chart Configuration
+        const basicLineOption = {
+            title: {
+                text: 'Monthly Sales Trend',
+                left: 'center'
+            },
+            tooltip: {
+                trigger: 'axis'
+            },
+            legend: {
+                data: ['Sales'],
+                bottom: 10
+            },
+            xAxis: {
+                type: 'category',
+                data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+            },
+            yAxis: {
+                type: 'value',
+                name: 'Amount ($)'
+            },
+            series: [{
+                name: 'Sales',
+                type: 'line',
+                data: [820, 932, 901, 934, 1290, 1330, 1320, 1200, 1100, 1350, 1450, 1600],
+                itemStyle: {
+                    color: '#2563eb'
+                },
+                lineStyle: {
+                    color: '#2563eb'
+                }
+            }]
+        };
+    </script>
+</section>
+
+<!-- ============================================ -->
+<!-- AREA LINE CHART -->
+<!-- ============================================ -->
+<section id="area-line-chart">
+    <h3>Area Line Chart</h3>
+    <p>Line chart with filled area underneath for better visual emphasis.</p>
+    
+    <div id="areaLineChart" style="height: 400px; width: 100%;"></div>
+    
+    <script type="text/javascript">
+        // Area Line Chart Configuration
+        const areaLineOption = {
+            title: {
+                text: 'Website Traffic',
+                left: 'center'
+            },
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'cross',
+                    label: {
+                        backgroundColor: '#6a7985'
+                    }
+                }
+            },
+            legend: {
+                data: ['Page Views'],
+                bottom: 10
+            },
+            xAxis: {
+                type: 'category',
+                boundaryGap: false,
+                data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+            },
+            yAxis: {
+                type: 'value',
+                name: 'Views'
+            },
+            series: [{
+                name: 'Page Views',
+                type: 'line',
+                stack: 'Total',
+                areaStyle: {
+                    color: {
+                        type: 'linear',
+                        x: 0,
+                        y: 0,
+                        x2: 0,
+                        y2: 1,
+                        colorStops: [{
+                            offset: 0, color: 'rgba(37, 99, 235, 0.8)'
+                        }, {
+                            offset: 1, color: 'rgba(37, 99, 235, 0.1)'
+                        }]
+                    }
+                },
+                data: [1200, 1320, 1010, 1340, 1090, 1630, 1520],
+                itemStyle: {
+                    color: '#2563eb'
+                }
+            }]
+        };
+    </script>
+</section>
+
+<!-- ============================================ -->
+<!-- MULTI-SERIES LINE CHART -->
+<!-- ============================================ -->
+<section id="multi-series-chart">
+    <h3>Multi-series Line Chart</h3>
+    <p>Comparison chart with multiple data series.</p>
+    
+    <div id="multiSeriesChart" style="height: 400px; width: 100%;"></div>
+    
+    <script type="text/javascript">
+        // Multi-series Line Chart Configuration
+        const multiSeriesOption = {
+            title: {
+                text: 'Revenue vs Expenses',
+                left: 'center'
+            },
+            tooltip: {
+                trigger: 'axis'
+            },
+            legend: {
+                data: ['Revenue', 'Expenses', 'Profit'],
+                bottom: 10
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '10%',
+                containLabel: true
+            },
+            xAxis: {
+                type: 'category',
+                data: ['Q1', 'Q2', 'Q3', 'Q4']
+            },
+            yAxis: {
+                type: 'value',
+                name: 'Amount ($K)'
+            },
+            series: [
+                {
+                    name: 'Revenue',
+                    type: 'line',
+                    data: [120, 132, 101, 134],
+                    itemStyle: {
+                        color: '#10b981'
+                    },
+                    lineStyle: {
+                        color: '#10b981'
+                    }
+                },
+                {
+                    name: 'Expenses',
+                    type: 'line',
+                    data: [80, 85, 75, 90],
+                    itemStyle: {
+                        color: '#ef4444'
+                    },
+                    lineStyle: {
+                        color: '#ef4444'
+                    }
+                },
+                {
+                    name: 'Profit',
+                    type: 'line',
+                    data: [40, 47, 26, 44],
+                    itemStyle: {
+                        color: '#8b5cf6'
+                    },
+                    lineStyle: {
+                        color: '#8b5cf6'
+                    }
+                }
+            ]
+        };
+    </script>
+</section>
+
+<!-- ============================================ -->
+<!-- SMOOTH LINE CHART -->
+<!-- ============================================ -->
+<section id="smooth-line-chart">
+    <h3>Smooth Line Chart</h3>
+    <p>Line chart with smooth curves for better visual appeal.</p>
+    
+    <div id="smoothLineChart" style="height: 400px; width: 100%;"></div>
+    
+    <script type="text/javascript">
+        // Smooth Line Chart Configuration
+        const smoothLineOption = {
+            title: {
+                text: 'Temperature Trend',
+                left: 'center'
+            },
+            tooltip: {
+                trigger: 'axis'
+            },
+            legend: {
+                data: ['Temperature'],
+                bottom: 10
+            },
+            xAxis: {
+                type: 'category',
+                data: ['6am', '9am', '12pm', '3pm', '6pm', '9pm', '12am']
+            },
+            yAxis: {
+                type: 'value',
+                name: 'Temperature (°C)'
+            },
+            series: [{
+                name: 'Temperature',
+                type: 'line',
+                smooth: true,
+                data: [18, 22, 28, 32, 29, 24, 20],
+                itemStyle: {
+                    color: '#f59e0b'
+                },
+                lineStyle: {
+                    color: '#f59e0b',
+                    width: 3
+                },
+                areaStyle: {
+                    color: {
+                        type: 'linear',
+                        x: 0,
+                        y: 0,
+                        x2: 0,
+                        y2: 1,
+                        colorStops: [{
+                            offset: 0, color: 'rgba(245, 158, 11, 0.3)'
+                        }, {
+                            offset: 1, color: 'rgba(245, 158, 11, 0.05)'
+                        }]
+                    }
+                }
+            }]
+        };
+    </script>
+</section>
+
+<!-- ============================================ -->
+<!-- STACKED LINE CHART -->
+<!-- ============================================ -->
+<section id="stacked-line-chart">
+    <h3>Stacked Line Chart</h3>
+    <p>Stacked area chart showing cumulative values.</p>
+    
+    <div id="stackedLineChart" style="height: 400px; width: 100%;"></div>
+    
+    <script type="text/javascript">
+        // Stacked Line Chart Configuration
+        const stackedLineOption = {
+            title: {
+                text: 'Traffic Sources',
+                left: 'center'
+            },
+            tooltip: {
+                trigger: 'axis'
+            },
+            legend: {
+                data: ['Direct', 'Social Media', 'Search Engine', 'Email'],
+                bottom: 10
+            },
+            xAxis: {
+                type: 'category',
+                boundaryGap: false,
+                data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun']
+            },
+            yAxis: {
+                type: 'value',
+                name: 'Visitors'
+            },
+            series: [
+                {
+                    name: 'Direct',
+                    type: 'line',
+                    stack: 'Total',
+                    areaStyle: {},
+                    data: [120, 132, 101, 134, 90, 230],
+                    itemStyle: { color: '#3b82f6' }
+                },
+                {
+                    name: 'Social Media',
+                    type: 'line',
+                    stack: 'Total',
+                    areaStyle: {},
+                    data: [220, 182, 191, 234, 290, 330],
+                    itemStyle: { color: '#10b981' }
+                },
+                {
+                    name: 'Search Engine',
+                    type: 'line',
+                    stack: 'Total',
+                    areaStyle: {},
+                    data: [150, 232, 201, 154, 190, 330],
+                    itemStyle: { color: '#f59e0b' }
+                },
+                {
+                    name: 'Email',
+                    type: 'line',
+                    stack: 'Total',
+                    areaStyle: {},
+                    data: [320, 332, 301, 334, 390, 330],
+                    itemStyle: { color: '#ef4444' }
+                }
+            ]
+        };
+    </script>
+</section>
+
+<!-- JavaScript to initialize all charts -->
+<script type="text/javascript">
+    // Initialize charts when ECharts is loaded
+    function initializeLineCharts() {
+        if (typeof echarts === 'undefined') {
+            console.warn('ECharts library not loaded. Include echarts.min.js to display charts.');
+            return;
+        }
+
+        // Initialize Basic Line Chart
+        const basicChart = echarts.init(document.getElementById('basicLineChart'));
+        basicChart.setOption(basicLineOption);
+
+        // Initialize Area Line Chart
+        const areaChart = echarts.init(document.getElementById('areaLineChart'));
+        areaChart.setOption(areaLineOption);
+
+        // Initialize Multi-series Chart
+        const multiChart = echarts.init(document.getElementById('multiSeriesChart'));
+        multiChart.setOption(multiSeriesOption);
+
+        // Initialize Smooth Line Chart
+        const smoothChart = echarts.init(document.getElementById('smoothLineChart'));
+        smoothChart.setOption(smoothLineOption);
+
+        // Initialize Stacked Line Chart
+        const stackedChart = echarts.init(document.getElementById('stackedLineChart'));
+        stackedChart.setOption(stackedLineOption);
+
+        // Make charts responsive
+        window.addEventListener('resize', function () {
+            basicChart.resize();
+            areaChart.resize();
+            multiChart.resize();
+            smoothChart.resize();
+            stackedChart.resize();
+        });
+    }
+
+    // Initialize when DOM is loaded
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeLineCharts);
+    } else {
+        initializeLineCharts();
+    }
+</script>
+
+</body>
+</html>

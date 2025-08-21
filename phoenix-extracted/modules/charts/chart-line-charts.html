@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Line Charts - Phoenix Theme</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+</head>
+<body>
+    <!-- Extracted from Phoenix theme source -->
+    <section class="chart-examples">
+        
+        <!-- Example 1: Basic Line Chart -->
+        <div class="example-section">
+            <h4>Basic Line Chart</h4>
+            <div id="basicLineChart" style="width: 100%; height: 400px;" class="border rounded p-3 bg-white"></div>
+        </div>
+
+        <!-- Example 2: Multi-Series Line Chart -->
+        <div class="example-section">
+            <h4>Multi-Series Line Chart</h4>
+            <div id="multiLineChart" style="width: 100%; height: 400px;" class="border rounded p-3 bg-white"></div>
+        </div>
+
+    </section>
+    
+    <script>
+        // Basic Line Chart
+        var basicLineChart = echarts.init(document.getElementById('basicLineChart'));
+        var basicLineOption = {
+            title: {
+                text: 'Website Traffic Over Time'
+            },
+            tooltip: {
+                trigger: 'axis'
+            },
+            xAxis: {
+                type: 'category',
+                data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun']
+            },
+            yAxis: {
+                type: 'value'
+            },
+            series: [{
+                name: 'Page Views',
+                data: [820, 932, 901, 934, 1290, 1330],
+                type: 'line',
+                smooth: true,
+                itemStyle: {
+                    color: '#007bff'
+                }
+            }]
+        };
+        basicLineChart.setOption(basicLineOption);
+
+        // Multi-Series Line Chart
+        var multiLineChart = echarts.init(document.getElementById('multiLineChart'));
+        var multiLineOption = {
+            title: {
+                text: 'User Metrics Comparison'
+            },
+            tooltip: {
+                trigger: 'axis'
+            },
+            legend: {
+                data: ['New Users', 'Returning Users', 'Total Sessions']
+            },
+            xAxis: {
+                type: 'category',
+                data: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6']
+            },
+            yAxis: {
+                type: 'value'
+            },
+            series: [
+                {
+                    name: 'New Users',
+                    type: 'line',
+                    data: [120, 132, 101, 134, 90, 230],
+                    smooth: true,
+                    itemStyle: { color: '#28a745' }
+                },
+                {
+                    name: 'Returning Users',
+                    type: 'line',
+                    data: [220, 182, 191, 234, 290, 330],
+                    smooth: true,
+                    itemStyle: { color: '#dc3545' }
+                },
+                {
+                    name: 'Total Sessions',
+                    type: 'line',
+                    data: [150, 232, 201, 154, 190, 330],
+                    smooth: true,
+                    itemStyle: { color: '#ffc107' }
+                }
+            ]
+        };
+        multiLineChart.setOption(multiLineOption);
+
+        // Make charts responsive
+        window.addEventListener('resize', function () {
+            basicLineChart.resize();
+            multiLineChart.resize();
+        });
+    </script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

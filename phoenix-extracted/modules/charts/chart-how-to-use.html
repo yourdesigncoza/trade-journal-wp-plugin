@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Use Charts - Phoenix Theme</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Extracted from Phoenix theme source -->
+    <section class="chart-documentation">
+        
+        <!-- Example 1: Getting Started -->
+        <div class="example-section">
+            <h4>Getting Started with ECharts</h4>
+            <div class="card">
+                <div class="card-body">
+                    <h5>1. Include ECharts Library</h5>
+                    <pre><code>&lt;script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"&gt;&lt;/script&gt;</code></pre>
+                    
+                    <h5 class="mt-4">2. Create Chart Container</h5>
+                    <pre><code>&lt;div id="myChart" style="width: 600px; height: 400px;"&gt;&lt;/div&gt;</code></pre>
+                    
+                    <h5 class="mt-4">3. Initialize Chart</h5>
+                    <pre><code>var myChart = echarts.init(document.getElementById('myChart'));
+var option = {
+    title: { text: 'My Chart' },
+    xAxis: { type: 'category', data: ['A', 'B', 'C'] },
+    yAxis: { type: 'value' },
+    series: [{ data: [120, 200, 150], type: 'bar' }]
+};
+myChart.setOption(option);</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Example 2: Chart Types -->
+        <div class="example-section">
+            <h4>Available Chart Types</h4>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-header bg-primary text-white">
+                            <h6 class="mb-0">Basic Charts</h6>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-unstyled">
+                                <li>• Bar Charts - Vertical and horizontal bars</li>
+                                <li>• Line Charts - Single and multi-series lines</li>
+                                <li>• Pie Charts - Pie and doughnut charts</li>
+                                <li>• Scatter Plots - Data point visualization</li>
+                                <li>• Area Charts - Filled area under lines</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-header bg-success text-white">
+                            <h6 class="mb-0">Advanced Charts</h6>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-unstyled">
+                                <li>• Radar Charts - Multi-dimensional data</li>
+                                <li>• Gauge Charts - Speedometer-style displays</li>
+                                <li>• Heatmaps - Two-dimensional data density</li>
+                                <li>• Candlestick - Financial data visualization</li>
+                                <li>• Geographic Maps - Geo-spatial data</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Example 3: Configuration Options -->
+        <div class="example-section">
+            <h4>Common Configuration Options</h4>
+            <div class="accordion" id="configAccordion">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="titleConfig">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#titleCollapse">
+                            Title Configuration
+                        </button>
+                    </h2>
+                    <div id="titleCollapse" class="accordion-collapse collapse show" data-bs-parent="#configAccordion">
+                        <div class="accordion-body">
+                            <pre><code>title: {
+    text: 'Main Title',
+    subtext: 'Subtitle',
+    left: 'center',
+    textStyle: {
+        color: '#333',
+        fontSize: 18
+    }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="tooltipConfig">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#tooltipCollapse">
+                            Tooltip Configuration
+                        </button>
+                    </h2>
+                    <div id="tooltipCollapse" class="accordion-collapse collapse" data-bs-parent="#configAccordion">
+                        <div class="accordion-body">
+                            <pre><code>tooltip: {
+    trigger: 'axis',
+    formatter: '{a} &lt;br/&gt;{b}: {c}',
+    backgroundColor: 'rgba(0,0,0,0.7)',
+    textStyle: {
+        color: '#fff'
+    }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="legendConfig">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#legendCollapse">
+                            Legend Configuration
+                        </button>
+                    </h2>
+                    <div id="legendCollapse" class="accordion-collapse collapse" data-bs-parent="#configAccordion">
+                        <div class="accordion-body">
+                            <pre><code>legend: {
+    data: ['Series1', 'Series2'],
+    orient: 'vertical',
+    left: 'left',
+    top: 'center'
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Example 4: Best Practices -->
+        <div class="example-section">
+            <h4>Best Practices</h4>
+            <div class="alert alert-warning">
+                <h6>Performance Tips:</h6>
+                <ul class="mb-0">
+                    <li>Always call <code>chart.resize()</code> when window resizes</li>
+                    <li>Use <code>chart.dispose()</code> before removing chart containers</li>
+                    <li>Limit data points for better performance (use sampling for large datasets)</li>
+                    <li>Use appropriate chart types for your data visualization needs</li>
+                </ul>
+            </div>
+        </div>
+
+    </section>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

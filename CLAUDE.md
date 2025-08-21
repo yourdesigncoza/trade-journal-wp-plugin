@@ -243,3 +243,4 @@ The plugin now includes 8 additional trade analysis fields:
 - Include FontAwesome icons in column headers for visual consistency
 - Group related actions using `btn-group btn-group-sm`
 - Comments display as tooltip-enabled buttons to save space
+- @phoenix-extracted/ file contains examples of UI / UX, you ALWAYS need to use example code to build new features, Important all styles will be loaded in the child theme.

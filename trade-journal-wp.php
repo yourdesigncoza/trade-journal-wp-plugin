@@ -188,6 +188,10 @@ class Trade_Journal_WP {
         require_once TRADE_JOURNAL_WP_PLUGIN_DIR . 'includes/class-trade-journal-database.php';
         require_once TRADE_JOURNAL_WP_PLUGIN_DIR . 'includes/class-trade-journal-shortcodes.php';
         require_once TRADE_JOURNAL_WP_PLUGIN_DIR . 'includes/class-trade-journal-admin.php';
+        require_once TRADE_JOURNAL_WP_PLUGIN_DIR . 'includes/class-trade-journal-login.php';
+        
+        // Initialize login component
+        new Trade_Journal_Login( TRADE_JOURNAL_WP_PLUGIN_URL, TRADE_JOURNAL_WP_VERSION );
     }
 
     /**

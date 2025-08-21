@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phoenix Basic Form Controls Module</title>
+</head>
+<body>
+
+<!-- 
+    PHOENIX BASIC FORM CONTROLS MODULE
+    ==================================================
+    
+    Purpose: Basic form controls from Phoenix theme
+    Description: Standard HTML form inputs with Phoenix styling
+    Bootstrap Documentation: https://getbootstrap.com/docs/5.3/forms/form-control/
+    
+    Required Dependencies:
+    - Bootstrap 5 CSS and JavaScript
+    - Phoenix theme CSS
+    
+    Usage: Include necessary CSS/JS files for full functionality
+-->
+
+<section id="form-controls-examples">
+    <h3>Basic Form Controls</h3>
+    
+    <!-- Text Inputs -->
+    <div class="example-section">
+        <h4>Text Inputs</h4>
+        <div class="mb-3">
+            <label for="basicInput" class="form-label">Email address</label>
+            <input class="form-control" id="basicInput" type="email" placeholder="name@example.com">
+        </div>
+        <div class="mb-3">
+            <label for="readOnlyInput" class="form-label">Readonly input</label>
+            <input class="form-control" id="readOnlyInput" type="text" placeholder="Readonly input here..." readonly>
+        </div>
+        <div class="mb-3">
+            <label for="disabledInput" class="form-label">Disabled input</label>
+            <input class="form-control" id="disabledInput" type="text" placeholder="Disabled input" disabled>
+        </div>
+    </div>
+    
+    <!-- Textarea -->
+    <div class="example-section">
+        <h4>Textarea</h4>
+        <div class="mb-3">
+            <label for="textArea" class="form-label">Example textarea</label>
+            <textarea class="form-control" id="textArea" rows="3"></textarea>
+        </div>
+    </div>
+    
+    <!-- Form Select -->
+    <div class="example-section">
+        <h4>Form Select</h4>
+        <div class="mb-3">
+            <label for="formSelect" class="form-label">Default select</label>
+            <select class="form-select" id="formSelect">
+                <option selected>Open this select menu</option>
+                <option value="1">One</option>
+                <option value="2">Two</option>
+                <option value="3">Three</option>
+            </select>
+        </div>
+    </div>
+    
+    <!-- Input Sizes -->
+    <div class="example-section">
+        <h4>Input Sizes</h4>
+        <input class="form-control form-control-lg mb-3" type="text" placeholder=".form-control-lg">
+        <input class="form-control mb-3" type="text" placeholder="Default input">
+        <input class="form-control form-control-sm" type="text" placeholder=".form-control-sm">
+    </div>
+    
+</section>
+
+</body>
+</html>

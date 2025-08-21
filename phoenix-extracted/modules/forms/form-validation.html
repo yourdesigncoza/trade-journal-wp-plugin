@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phoenix Form Validation Module</title>
+</head>
+<body>
+
+<!-- 
+    PHOENIX FORM VALIDATION MODULE
+    ==================================================
+    
+    Purpose: Form validation examples from Phoenix theme
+    Description: Bootstrap form validation with Phoenix styling
+    Bootstrap Documentation: https://getbootstrap.com/docs/5.3/forms/validation/
+    
+    Required Dependencies:
+    - Bootstrap 5 CSS and JavaScript
+    - Phoenix theme CSS
+    
+    Usage: Include necessary CSS/JS files for full functionality
+-->
+
+<section id="validation-examples">
+    <h3>Form Validation</h3>
+    
+    <!-- Validation States -->
+    <div class="example-section">
+        <h4>Validation States</h4>
+        <div class="mb-3">
+            <label for="validInput" class="form-label">Valid input</label>
+            <input type="text" class="form-control is-valid" id="validInput" value="Valid value" required>
+            <div class="valid-feedback">Looks good!</div>
+        </div>
+        
+        <div class="mb-3">
+            <label for="invalidInput" class="form-label">Invalid input</label>
+            <input type="text" class="form-control is-invalid" id="invalidInput" value="Invalid value" required>
+            <div class="invalid-feedback">Please provide a valid input.</div>
+        </div>
+        
+        <div class="mb-3">
+            <label for="validTextarea" class="form-label">Valid textarea</label>
+            <textarea class="form-control is-valid" id="validTextarea" required>Valid content</textarea>
+            <div class="valid-feedback">Looks good!</div>
+        </div>
+    </div>
+    
+    <!-- Custom Validation -->
+    <div class="example-section">
+        <h4>Custom Validation</h4>
+        <form class="row g-3 needs-validation" novalidate>
+            <div class="col-md-4">
+                <label for="validationCustom01" class="form-label">First name</label>
+                <input type="text" class="form-control" id="validationCustom01" value="Mark" required>
+                <div class="valid-feedback">Looks good!</div>
+            </div>
+            <div class="col-md-4">
+                <label for="validationCustom02" class="form-label">Last name</label>
+                <input type="text" class="form-control" id="validationCustom02" value="Otto" required>
+                <div class="valid-feedback">Looks good!</div>
+            </div>
+            <div class="col-12">
+                <button class="btn btn-phoenix-primary" type="submit">Submit form</button>
+            </div>
+        </form>
+    </div>
+    
+</section>
+
+</body>
+</html>

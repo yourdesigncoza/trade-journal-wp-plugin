@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phoenix Color Utilities</title>
+</head>
+<body>
+
+<!-- 
+    PHOENIX COLOR UTILITIES
+    ========================
+    
+    Purpose: Color utility classes for text, backgrounds, and borders
+    Description: Phoenix theme color system with custom color variations and Bootstrap color utilities
+    Bootstrap Documentation: https://getbootstrap.com/docs/5.3/utilities/colors/
+    
+    Color Classes:
+    - Text Colors: .text-primary, .text-secondary, .text-success, etc.
+    - Background Colors: .bg-primary, .bg-secondary, .bg-success, etc.
+    - Border Colors: .border-primary, .border-secondary, .border-success, etc.
+    - Phoenix Custom: .text-body-emphasis, .text-body-secondary, .bg-body-emphasis, etc.
+    
+    Usage: Apply color classes directly to HTML elements
+-->
+
+<!-- ============================================ -->
+<!-- TEXT COLORS -->
+<!-- ============================================ -->
+<section id="text-colors">
+    <h3>Text Colors</h3>
+    
+    <!-- Bootstrap Standard Colors -->
+    <div class="mb-3">
+        <h5>Bootstrap Standard Colors</h5>
+        <p class="text-primary">Primary text color</p>
+        <p class="text-secondary">Secondary text color</p>
+        <p class="text-success">Success text color</p>
+        <p class="text-danger">Danger text color</p>
+        <p class="text-warning">Warning text color</p>
+        <p class="text-info">Info text color</p>
+        <p class="text-light bg-dark p-2">Light text color</p>
+        <p class="text-dark">Dark text color</p>
+        <p class="text-muted">Muted text color</p>
+    </div>
+    
+    <!-- Phoenix Custom Text Colors -->
+    <div class="mb-3">
+        <h5>Phoenix Custom Text Colors</h5>
+        <p class="text-body-emphasis">Body emphasis text</p>
+        <p class="text-body-secondary">Body secondary text</p>
+        <p class="text-body-tertiary">Body tertiary text</p>
+        <p class="text-body-quaternary">Body quaternary text</p>
+        <p class="text-body-highlight">Body highlight text</p>
+    </div>
+</section>
+
+<!-- ============================================ -->
+<!-- BACKGROUND COLORS -->
+<!-- ============================================ -->
+<section id="background-colors">
+    <h3>Background Colors</h3>
+    
+    <!-- Bootstrap Standard Backgrounds -->
+    <div class="mb-3">
+        <h5>Bootstrap Standard Backgrounds</h5>
+        <div class="p-3 mb-2 bg-primary text-white">Primary background</div>
+        <div class="p-3 mb-2 bg-secondary text-white">Secondary background</div>
+        <div class="p-3 mb-2 bg-success text-white">Success background</div>
+        <div class="p-3 mb-2 bg-danger text-white">Danger background</div>
+        <div class="p-3 mb-2 bg-warning text-dark">Warning background</div>
+        <div class="p-3 mb-2 bg-info text-dark">Info background</div>
+        <div class="p-3 mb-2 bg-light text-dark">Light background</div>
+        <div class="p-3 mb-2 bg-dark text-white">Dark background</div>
+    </div>
+    
+    <!-- Phoenix Custom Backgrounds -->
+    <div class="mb-3">
+        <h5>Phoenix Custom Backgrounds</h5>
+        <div class="p-3 mb-2 bg-body-emphasis">Body emphasis background</div>
+        <div class="p-3 mb-2 bg-body-secondary">Body secondary background</div>
+        <div class="p-3 mb-2 bg-body-tertiary">Body tertiary background</div>
+    </div>
+</section>
+
+<!-- ============================================ -->
+<!-- SUBTLE BACKGROUNDS -->
+<!-- ============================================ -->
+<section id="subtle-backgrounds">
+    <h3>Subtle Backgrounds</h3>
+    
+    <div class="p-3 mb-2 bg-subtle-primary">Subtle primary background</div>
+    <div class="p-3 mb-2 bg-subtle-secondary">Subtle secondary background</div>
+    <div class="p-3 mb-2 bg-subtle-success">Subtle success background</div>
+    <div class="p-3 mb-2 bg-subtle-danger">Subtle danger background</div>
+    <div class="p-3 mb-2 bg-subtle-warning">Subtle warning background</div>
+    <div class="p-3 mb-2 bg-subtle-info">Subtle info background</div>
+</section>
+
+<!-- ============================================ -->
+<!-- BORDER COLORS -->
+<!-- ============================================ -->
+<section id="border-colors">
+    <h3>Border Colors</h3>
+    
+    <div class="mb-3">
+        <div class="p-3 mb-2 border border-primary">Primary border</div>
+        <div class="p-3 mb-2 border border-secondary">Secondary border</div>
+        <div class="p-3 mb-2 border border-success">Success border</div>
+        <div class="p-3 mb-2 border border-danger">Danger border</div>
+        <div class="p-3 mb-2 border border-warning">Warning border</div>
+        <div class="p-3 mb-2 border border-info">Info border</div>
+        <div class="p-3 mb-2 border border-light">Light border</div>
+        <div class="p-3 mb-2 border border-dark">Dark border</div>
+    </div>
+</section>
+
+<!-- ============================================ -->
+<!-- COLOR OPACITY -->
+<!-- ============================================ -->
+<section id="color-opacity">
+    <h3>Color Opacity</h3>
+    
+    <div class="mb-3">
+        <h5>Text Opacity</h5>
+        <p class="text-primary">Primary text</p>
+        <p class="text-primary text-opacity-75">75% opacity primary text</p>
+        <p class="text-primary text-opacity-50">50% opacity primary text</p>
+        <p class="text-primary text-opacity-25">25% opacity primary text</p>
+    </div>
+    
+    <div class="mb-3">
+        <h5>Background Opacity</h5>
+        <div class="p-3 mb-2 bg-success">Success background</div>
+        <div class="p-3 mb-2 bg-success bg-opacity-75">75% opacity success background</div>
+        <div class="p-3 mb-2 bg-success bg-opacity-50">50% opacity success background</div>
+        <div class="p-3 mb-2 bg-success bg-opacity-25">25% opacity success background</div>
+    </div>
+</section>
+
+<!-- ============================================ -->
+<!-- LINK COLORS -->
+<!-- ============================================ -->
+<section id="link-colors">
+    <h3>Link Colors</h3>
+    
+    <div class="mb-3">
+        <p><a href="#" class="link-primary">Primary link</a></p>
+        <p><a href="#" class="link-secondary">Secondary link</a></p>
+        <p><a href="#" class="link-success">Success link</a></p>
+        <p><a href="#" class="link-danger">Danger link</a></p>
+        <p><a href="#" class="link-warning">Warning link</a></p>
+        <p><a href="#" class="link-info">Info link</a></p>
+        <p><a href="#" class="link-light bg-dark p-1">Light link</a></p>
+        <p><a href="#" class="link-dark">Dark link</a></p>
+    </div>
+</section>
+
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phoenix Advanced Tables Module</title>
+</head>
+<body>
+
+<!-- 
+    PHOENIX ADVANCED TABLES MODULE
+    ==================================================
+    
+    Purpose: Advanced table components from Phoenix theme
+    Description: Advanced table features with Phoenix styling
+    Bootstrap Documentation: https://getbootstrap.com/docs/5.3/content/tables/
+    
+    Required Dependencies:
+    - Bootstrap 5 CSS and JavaScript
+    - Phoenix theme CSS
+    
+    Usage: Include necessary CSS/JS files for full functionality
+-->
+
+<section id="advanced-table-examples">
+    <h3>Advanced Tables</h3>
+    
+    <!-- Responsive Table -->
+    <div class="example-section">
+        <h4>Responsive Table</h4>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Heading</th>
+                        <th scope="col">Heading</th>
+                        <th scope="col">Heading</th>
+                        <th scope="col">Heading</th>
+                        <th scope="col">Heading</th>
+                        <th scope="col">Heading</th>
+                        <th scope="col">Heading</th>
+                        <th scope="col">Heading</th>
+                        <th scope="col">Heading</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th scope="row">1</th>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">2</th>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Table with Checkboxes -->
+    <div class="example-section">
+        <h4>Bulk Select Table</h4>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="selectAll">
+                            <label class="form-check-label" for="selectAll"></label>
+                        </div>
+                    </th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="check1">
+                            <label class="form-check-label" for="check1"></label>
+                        </div>
+                    </td>
+                    <td>John Doe</td>
+                    <td>john@example.com</td>
+                    <td><span class="badge bg-success">Active</span></td>
+                    <td>
+                        <button class="btn btn-phoenix-primary btn-sm">Edit</button>
+                        <button class="btn btn-phoenix-danger btn-sm">Delete</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="check2">
+                            <label class="form-check-label" for="check2"></label>
+                        </div>
+                    </td>
+                    <td>Jane Smith</td>
+                    <td>jane@example.com</td>
+                    <td><span class="badge bg-warning">Pending</span></td>
+                    <td>
+                        <button class="btn btn-phoenix-primary btn-sm">Edit</button>
+                        <button class="btn btn-phoenix-danger btn-sm">Delete</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+</section>
+
+</body>
+</html>
